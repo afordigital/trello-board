@@ -1,7 +1,13 @@
 import { defineConfig, presetIcons, presetWebFonts, presetUno } from 'unocss'
 
 export default defineConfig({
-  theme: {},
+  theme: {
+    colors: {
+      mainBackgroundColor: '#0d1117',
+      columnBackgroundColor: '#161c22',
+      customWhite: '#fafafa'
+    }
+  },
   presets: [
     presetUno(),
     presetWebFonts({
