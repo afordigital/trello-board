@@ -26,6 +26,9 @@ dependencies:
   '@unocss/reset':
     specifier: ^0.56.5
     version: 0.56.5
+  lucide:
+    specifier: ^0.303.0
+    version: 0.303.0
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -2848,6 +2851,10 @@ packages:
     dependencies:
       yallist: 3.1.1
     dev: true
+
+  /lucide@0.303.0:
+    resolution: {integrity: sha512-nmpe4cuwvt736lm4aWgACfuK1Gx0ryTq/onSmj0QF5fU2fVb4taP6FJG74q3PqgR3zSGALBv8PlAt1vJRiVESQ==}
+    dev: false
 
   /lz-string@1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}

@@ -7,7 +7,7 @@ export type Column = {
 }
 
 export type Card = {
-  id: number | string
+  id: number
   title: string
   description: string
 }
