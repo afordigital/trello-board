@@ -13,21 +13,22 @@ import {
   useSensors
 } from '@dnd-kit/core'
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
+import { useColumns } from './store/useColumns'
 
 export const KanbanBoard = () => {
-  const [columns, setColumns] = useState<Column[]>([])
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
+  const { columns, setColumn, addColumn } = useColumns()
   const columnsId = useMemo(() => columns.map(col => col.id), [columns])
 
   const createNewColumn = () => {
     const columnToAdd = createColumn(columns.length + 1)
     console.log(columnToAdd)
-    setColumns([...columns, columnToAdd])
+    addColumn(columnToAdd)
   }
 
   const deleteColumn = (id: Id) => {
     const filteredColumn = filterColumn(columns, id)
-    setColumns(filteredColumn)
+    setColumn(filteredColumn)
   }
 
   const onDragStart = (event: DragStartEvent) => {
@@ -47,15 +48,15 @@ export const KanbanBoard = () => {
 
     if (activeColumnId === overColumnId) return
 
-    setColumns(columns => {
-      const activeColumnIndex = columns.findIndex(
-        col => col.id === activeColumnId
-      )
+    const activeColumnIndex = columns.findIndex(
+      (col: Column) => col.id === activeColumnId
+    )
 
-      const overColumnIndex = columns.findIndex(col => col.id === overColumnId)
+    const overColumnIndex = columns.findIndex(
+      (col: Column) => col.id === overColumnId
+    )
 
-      return arrayMove(columns, activeColumnIndex, overColumnIndex)
-    })
+    setColumn(arrayMove(columns, activeColumnIndex, overColumnIndex))
   }
 
   const sensors = useSensors(

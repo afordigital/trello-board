@@ -12,7 +12,9 @@ export default defineConfig({
     presetUno(),
     presetWebFonts({
       provider: 'google',
-      fonts: {}
+      fonts: {
+        onest: 'Onest'
+      }
     }),
     presetIcons({
       cdn: 'https://esm.sh/',

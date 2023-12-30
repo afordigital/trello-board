@@ -1,7 +1,8 @@
 export const createColumn = (length: number) => {
   return {
     id: generateId(),
-    title: `Column ${length}`
+    title: `Column ${length}`,
+    cards: []
   }
 }
 
