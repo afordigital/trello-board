@@ -13,7 +13,8 @@ describe('create new column', () => {
     ({ columnsNumber, expectedTitle }) => {
       expect(createColumn(columnsNumber).title).toBe(expectedTitle)
       expect(typeof createColumn(columnsNumber).id).toBe('number')
-      expect(createColumn(columnsNumber).id.toString().length).toBe(4)
+      // This id could be a number between 0 and 10000. With the toBe(4) assert the test was not deterministic and sometimes failed.
+      expect(createColumn(columnsNumber).id.toString().length).toBeLessThanOrEqual(5)
     }
   )
 })
