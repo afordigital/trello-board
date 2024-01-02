@@ -77,32 +77,37 @@ export const KanbanBoard = () => {
         onDragEnd={onDragEnd}
       >
         <div className='m-auto flex min-h-screen w-full items-center overflow-x-auto overflow-y-hidden px-[40px]'>
-          <SortableContext items={columnsId}>
-            <div className='flex gap-x-4'>
-              {columns.map(column => (
-                <ColumnContainer column={column} deleteColumn={deleteColumn} />
-              ))}
-            </div>
-            <button
-              onClick={createNewColumn}
-              className='h-[60px] w-[350px] flex items-center justify-center gap-2 min-w-[350px] cursor-pointer ml-4 rounded-lg bg-mainBackgroundColor border-2 border-columnBackgroundColor'
-            >
-              <AddIcon />
-              Add column
-            </button>
-          </SortableContext>
+          <div className='flex'>
+            <SortableContext items={columnsId}>
+              <div className='flex gap-x-4'>
+                {columns.map(column => (
+                  <ColumnContainer
+                    column={column}
+                    deleteColumn={deleteColumn}
+                  />
+                ))}
+              </div>
+              <button
+                onClick={createNewColumn}
+                className='h-[60px] w-[350px] flex items-center justify-center gap-2 min-w-[350px] cursor-pointer ml-4 rounded-lg bg-mainBackgroundColor border-2 border-columnBackgroundColor'
+              >
+                <AddIcon />
+                Add column
+              </button>
+            </SortableContext>
+          </div>
+          {createPortal(
+            <DragOverlay>
+              {activeColumn && (
+                <ColumnContainer
+                  column={activeColumn}
+                  deleteColumn={deleteColumn}
+                />
+              )}
+            </DragOverlay>,
+            document.body
+          )}
         </div>
-        {createPortal(
-          <DragOverlay>
-            {activeColumn && (
-              <ColumnContainer
-                column={activeColumn}
-                deleteColumn={deleteColumn}
-              />
-            )}
-          </DragOverlay>,
-          document.body
-        )}
       </DndContext>
     </div>
   )

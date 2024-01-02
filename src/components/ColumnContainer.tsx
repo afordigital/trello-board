@@ -50,7 +50,8 @@ export const ColumnContainer = (props: Props) => {
     const newCard = {
       id: generateId(),
       title: 'New card',
-      description: ''
+      description: '',
+      srcImage: ''
     }
     addCard(newCard, column.id)
   }
