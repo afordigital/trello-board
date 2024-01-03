@@ -31,8 +31,6 @@ export const CardContainer = (props: CardProps) => {
 
     const srcImg = await handleReaderResponse(file)
 
-    console.log(srcImg)
-
     if (srcImg) {
       if (!imgRef.current) return
       imgRef.current.src = srcImg as string
