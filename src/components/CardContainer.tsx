@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { Minus } from 'lucide-react'
 import { Card, Id } from '../types'
 import { useColumns } from './store/useColumns'
 
@@ -10,9 +11,8 @@ interface CardProps {
 export const CardContainer = (props: CardProps) => {
   const { id, title, description, srcImage } = props.card
 
-  console.log(srcImage)
-
-  const { editCardTitle, editCardDescription, addCardImage } = useColumns()
+  const { editCardTitle, editCardDescription, addCardImage, deleteCard } =
+    useColumns()
 
   const handleTitleChange = (newTitle: string) => {
     editCardTitle(newTitle, id, props.columnId)
@@ -49,6 +49,10 @@ export const CardContainer = (props: CardProps) => {
     addCardImage('', id, props.columnId)
   }
 
+  const handleDeleteCard = () => {
+    deleteCard(id, props.columnId)
+  }
+
   return (
     <div
       onDragOver={e => {
@@ -59,12 +63,13 @@ export const CardContainer = (props: CardProps) => {
       }}
       className='h-fit w-full gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col'
     >
-      <label>
+      <label className='w-full flex'>
         <input
           value={title}
           onChange={e => handleTitleChange(e.target.value)}
-          className='bg-[#1E2733] w-full px-4 pt-2'
+          className='bg-[#1E2733] px-4 pt-2 flex-1'
         />
+        <Minus onClick={handleDeleteCard} />
       </label>
       <label>
         <textarea

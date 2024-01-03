@@ -8,6 +8,7 @@ interface ColumnState {
   addColumn: (column: Column) => void
   editColumnTitle: (title: string, id: Id) => void
   addCard: (card: Card, id: Id) => void
+  deleteCard: (cardId: Id, columnId: Id) => void
   addCardImage: (newImg: string, cardId: Id, columnId: Id) => void
   editCardTitle: (newTitle: string, cardId: Id, columnId: Id) => void
   editCardDescription: (
@@ -37,6 +38,18 @@ export const useColumns = create<ColumnState>()(
           columns: state.columns.map(column => {
             if (column.id === id) {
               return { ...column, cards: [...column.cards, card] }
+            }
+            return column
+          })
+        })),
+      deleteCard: (cardId, columnId) =>
+        set(prev => ({
+          columns: prev.columns.map(column => {
+            if (column.id === columnId) {
+              return {
+                ...column,
+                cards: column.cards.filter(card => card.id !== cardId)
+              }
             }
             return column
           })

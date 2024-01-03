@@ -19,6 +19,7 @@
     "@types/jest": "^29.5.11",
     "@unocss/reset": "^0.56.5",
     "lucide": "^0.303.0",
+    "lucide-react": "^0.303.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "zustand": "^4.4.7"
