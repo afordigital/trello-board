@@ -28,6 +28,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
+      - name: Install PNPM
+        run: npm i -g pnpm
       - run: pnpm ci --no-frozen-lockfile
       - run: pnpm run build --if-present --no-frozen-lockfile
       - run: pnpm test --no-frozen-lockfile
