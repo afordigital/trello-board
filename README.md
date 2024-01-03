@@ -10,3 +10,5 @@ Este template cuenta con:
 
   - Presets de icons y tipografía en UnoCSS
   - Style reset de Tailwind compact para UnoCSS
+
+  - test
