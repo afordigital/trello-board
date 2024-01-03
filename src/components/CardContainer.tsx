@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { Minus } from 'lucide-react'
 import { Card, Id } from '../types'
 import { useColumns } from './store/useColumns'
+import { handleReader, handleReaderResponse } from '../utils/handleReader'
 
 interface CardProps {
   card: Card
@@ -24,23 +25,22 @@ export const CardContainer = (props: CardProps) => {
 
   const imgRef = useRef<HTMLImageElement | null>(null)
 
-  const handleImageDropped = (e: React.DragEvent<HTMLElement>) => {
+  const handleImageDropped = async (e: React.DragEvent<HTMLElement>) => {
     e.preventDefault()
     const file = e?.dataTransfer?.files[0]
 
-    if (file?.type.match('image.*')) {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
+    const srcImg = await handleReaderResponse(file)
 
-      reader.onload = function () {
-        if (!imgRef.current) return
-        imgRef.current.src = reader?.result?.toString() || ''
-        imgRef.current.style.display = 'block'
+    console.log(srcImg)
 
-        addCardImage(imgRef.current.src, id, props.columnId)
-      }
+    if (srcImg) {
+      if (!imgRef.current) return
+      imgRef.current.src = srcImg as string
+      imgRef.current.style.display = 'block'
+
+      addCardImage(imgRef.current.src, id, props.columnId)
     } else {
-      alert('El archivo no es una imagen válida')
+      alert('Image type is not valid')
     }
   }
 
@@ -71,6 +71,7 @@ export const CardContainer = (props: CardProps) => {
         />
         <Minus onClick={handleDeleteCard} />
       </label>
+
       <label>
         <textarea
           value={description}

@@ -1,10 +1,9 @@
-import { useSortable } from '@dnd-kit/sortable'
 import TrashIcon from '../icons/TrashIcon'
 import { Column, Id } from '../types'
-import { CSS } from '@dnd-kit/utilities'
 import { CardContainer } from './CardContainer'
 import { useColumns } from './store/useColumns'
 import { generateId } from '../utils/generateId'
+import { useSortableConf } from '../hooks/useSortableConf'
 
 type Props = {
   column: Column
@@ -16,30 +15,13 @@ export const ColumnContainer = (props: Props) => {
 
   const { editColumnTitle, addCard } = useColumns()
 
-  const {
-    setNodeRef,
-    attributes,
-    listeners,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({
-    id: column.id,
-    data: {
-      type: 'Column',
-      column
-    }
-  })
+  const { isDragging, style, setNodeRef, attributes, listeners } =
+    useSortableConf(column)
 
   if (isDragging) {
     return (
       <div className='bg-columnBackgroundColor opacity-40 border-4 border-rose-500 w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col'></div>
     )
-  }
-
-  const style = {
-    transition,
-    transform: CSS.Transform.toString(transform)
   }
 
   const onInputChange = (newTitle: string) => {
@@ -100,7 +82,9 @@ export const ColumnContainer = (props: Props) => {
           Add card
         </button>
         {column.cards
-          .map(card => <CardContainer card={card} columnId={column.id} />)
+          .map(card => (
+            <CardContainer key={card.id} card={card} columnId={column.id} />
+          ))
           .reverse()}
       </div>
     </div>
