@@ -1,4 +1,3 @@
-import TrashIcon from '../icons/TrashIcon'
 import { Column, Id } from '../types'
 import { CardContainer } from './CardContainer'
 import { useColumns } from './store/useColumns'
@@ -6,6 +5,7 @@ import { generateId } from '../utils/generateId'
 import { useSortableConf } from '../hooks/useSortableConf'
 import { SortableContext } from '@dnd-kit/sortable'
 import { useMemo } from 'react'
+import { Trash2, GripVertical } from 'lucide-react'
 
 type Props = {
   column: Column
@@ -38,7 +38,8 @@ export const ColumnContainer = (props: Props) => {
       id: generateId(),
       title: 'New card',
       description: '',
-      srcImage: ''
+      srcImage: '',
+      imageCovered: false
     }
     addCard(newCard, column.id)
   }
@@ -49,32 +50,33 @@ export const ColumnContainer = (props: Props) => {
       style={style}
       className='w-[350px] h-[500px] max-h-[500px] flex flex-col'
     >
-      <div
-        {...attributes}
-        {...listeners}
-        className='flex p-4 mb-4 h-[60px] flex items-center justify-between'
-      >
+      <div className='flex p-4 mb-4 h-[60px] flex items-center justify-between'>
         <label className='flex items-center'>
-          <input
-            type='text'
-            value={column.title}
-            onChange={e => onInputChange(e.target.value)}
-            className='bg-transparent text-xl font-bold'
-          />
+          <div className='flex-1'>
+            <input
+              type='text'
+              value={column.title}
+              onChange={e => onInputChange(e.target.value)}
+              className='bg-transparent'
+            />
+          </div>
+        </label>
+        <div className='flex gap-x-2 items-center'>
           {column.cards.length > 0 && (
-            <p className='bg-slate-7 p-1 w-[30px] text-md text-center rounded-full'>
+            <p className='bg-slate-7 w-[20px] h-[20px] text-sm text-center rounded-full'>
               {column.cards.length}
             </p>
           )}
-        </label>
-        <button
-          onClick={() => {
-            deleteColumn(column.id)
-          }}
-          className='bg-transparent'
-        >
-          <TrashIcon />
-        </button>
+          <button
+            onClick={() => {
+              deleteColumn(column.id)
+            }}
+            className='bg-transparent'
+          >
+            <Trash2 size={'18px'} />
+          </button>
+          <GripVertical {...attributes} {...listeners} />
+        </div>
       </div>
 
       <div className='flex flex-grow flex-col gap-y-4'>

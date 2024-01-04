@@ -11,4 +11,5 @@ export type Card = {
   title: string
   description: string
   srcImage: string
+  imageCovered: boolean
 }

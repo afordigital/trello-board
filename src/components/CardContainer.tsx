@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react'
-import { Minus } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Minus, GripVertical } from 'lucide-react'
 import { Card, Id } from '../types'
 import { useColumns } from './store/useColumns'
 import { handleReaderResponse } from '../utils/handleReader'
 import { useSortableConf } from '../hooks/useSortableConf'
+import { CardDetail } from './CardDetail'
 
 interface CardProps {
   card: Card
@@ -12,8 +13,9 @@ interface CardProps {
 
 export const CardContainer = (props: CardProps) => {
   const [isImgHovered, setIsImgHovered] = useState(false)
+  const [isOpened, setIsOpened] = useState(false)
 
-  const { id, title, description, srcImage } = props.card
+  const { id, title, description, srcImage, imageCovered } = props.card
 
   const { editCardTitle, editCardDescription, addCardImage, deleteCard } =
     useColumns()
@@ -27,6 +29,10 @@ export const CardContainer = (props: CardProps) => {
 
   const handleDescriptionChange = (newDescription: string) => {
     editCardDescription(newDescription, id, props.columnId)
+  }
+
+  const closeDetails = () => {
+    setIsOpened(false)
   }
 
   const imgRef = useRef<HTMLImageElement | null>(null)
@@ -68,59 +74,64 @@ export const CardContainer = (props: CardProps) => {
   }
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      onDragOver={e => {
-        e.preventDefault()
-      }}
-      onDrop={e => {
-        handleImageDropped(e)
-      }}
-      className='h-fit w-full gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col'
-    >
-      <label className='w-full flex items-center'>
-        <input
-          value={title}
-          onChange={e => handleTitleChange(e.target.value)}
-          className='bg-[#1E2733] rounded-[4px] mr-2 px-4 pt-2 flex-grow'
-        />
-        <Minus onClick={handleDeleteCard} className='cursor-pointer' />
-      </label>
+    <>
+      {isOpened && <CardDetail closeDetails={closeDetails} card={props.card} />}
+      <div
+        ref={setNodeRef}
+        style={style}
+        onClick={() => {
+          setIsOpened(true)
+        }}
+        onDragOver={e => {
+          e.preventDefault()
+        }}
+        onDrop={handleImageDropped}
+        className='h-fit w-full gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col'
+      >
+        <label className='w-full flex items-center'>
+          <input
+            value={title}
+            onChange={e => handleTitleChange(e.target.value)}
+            className='bg-[#1E2733] rounded-[4px] mr-2 px-4 pt-2 flex-grow'
+          />
+          <Minus onClick={handleDeleteCard} className='cursor-pointer' />
+          <GripVertical {...attributes} {...listeners} />
+        </label>
 
-      <label>
+        {/* <label>
         <textarea
           value={description}
           onChange={e => handleDescriptionChange(e.target.value)}
           className='bg-[#1E2733] rounded-[4px] text-customWhite h-[100px] w-full'
         />
-      </label>
+      </label> */}
 
-      <div
-        className='relative'
-        onMouseEnter={() => setIsImgHovered(true)}
-        onMouseLeave={() => setIsImgHovered(false)}
-      >
-        {srcImage !== '' && isImgHovered && (
-          <button
-            onClick={() => {
-              deleteImage()
-            }}
-            className='absolute top-0 left-0 right-0 z-20 bg-[#1E2733] rounded-[4px] py-2 hover:bg-slate-700'
+        {imageCovered && (
+          <div
+            className='relative'
+            onMouseEnter={() => setIsImgHovered(true)}
+            onMouseLeave={() => setIsImgHovered(false)}
           >
-            Delete
-          </button>
-        )}
+            {srcImage !== '' && isImgHovered && (
+              <button
+                onClick={() => {
+                  deleteImage()
+                }}
+                className='absolute top-0 left-0 right-0 z-20 bg-[#1E2733] rounded-[4px] py-2 hover:bg-slate-700'
+              >
+                Delete
+              </button>
+            )}
 
-        <img
-          src={srcImage ? srcImage : ''}
-          ref={imgRef}
-          alt='Image Preview'
-          style={{ display: srcImage ? 'block' : 'none' }}
-        />
+            <img
+              src={srcImage ? srcImage : ''}
+              ref={imgRef}
+              alt='Image Preview'
+              style={{ display: srcImage ? 'block' : 'none' }}
+            />
+          </div>
+        )}
       </div>
-    </div>
+    </>
   )
 }

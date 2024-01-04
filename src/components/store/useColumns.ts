@@ -16,6 +16,7 @@ interface ColumnState {
     cardId: Id,
     columnId: Id
   ) => void
+  editCardCover: (newState: boolean, cardId: Id, columnId: Id) => void
 }
 
 export const useColumns = create<ColumnState>()(
@@ -105,6 +106,26 @@ export const useColumns = create<ColumnState>()(
                     return {
                       ...card,
                       description: newDescription
+                    }
+                  }
+                  return card
+                })
+              }
+            }
+            return column
+          })
+        })),
+      editCardCover: (newState, cardId, columnId) =>
+        set(prev => ({
+          columns: prev.columns.map(column => {
+            if (column.id === columnId) {
+              return {
+                ...column,
+                cards: column.cards.map(card => {
+                  if (card.id === cardId) {
+                    return {
+                      ...card,
+                      imageCovered: newState
                     }
                   }
                   return card

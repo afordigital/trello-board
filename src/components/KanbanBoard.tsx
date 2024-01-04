@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import AddIcon from '../icons/AddIcon'
 import { Column, Id } from '../types'
 import { ColumnContainer } from './ColumnContainer'
 import { createColumn } from '../utils/createColumn'
@@ -16,6 +15,7 @@ import {
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { useColumns } from './store/useColumns'
 import { createPortal } from 'react-dom'
+import { PlusCircle } from 'lucide-react'
 
 export const KanbanBoard = () => {
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
@@ -91,7 +91,7 @@ export const KanbanBoard = () => {
                 onClick={createNewColumn}
                 className='h-[60px] w-[350px] flex items-center justify-center gap-2 min-w-[350px] cursor-pointer ml-4 rounded-lg bg-mainBackgroundColor border-2 border-columnBackgroundColor'
               >
-                <AddIcon />
+                <PlusCircle />
                 Add column
               </button>
             </SortableContext>
