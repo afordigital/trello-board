@@ -52,26 +52,26 @@ export const ColumnContainer = (props: Props) => {
       <div
         {...attributes}
         {...listeners}
-        className='flex p-4 mb-4 h-[60px] flex items-center justify-between bg-columnBackgroundColor'
+        className='flex p-4 mb-4 h-[60px] flex items-center justify-between'
       >
-        <label>
+        <label className='flex items-center'>
           <input
             type='text'
             value={column.title}
             onChange={e => onInputChange(e.target.value)}
-            className='bg-columnBackgroundColor'
+            className='bg-transparent text-xl font-bold'
           />
+          {column.cards.length > 0 && (
+            <p className='bg-slate-7 p-1 w-[30px] text-md text-center rounded-full'>
+              {column.cards.length}
+            </p>
+          )}
         </label>
-        {column.cards.length > 0 && (
-          <p className='bg-slate-7 p-1 w-[30px] text-center rounded-full'>
-            {column.cards.length}
-          </p>
-        )}
         <button
           onClick={() => {
             deleteColumn(column.id)
           }}
-          className='bg-columnBackgroundColor'
+          className='bg-transparent'
         >
           <TrashIcon />
         </button>
@@ -82,7 +82,7 @@ export const ColumnContainer = (props: Props) => {
           onClick={() => {
             addNewCard()
           }}
-          className='bg-slate-7 h-fit p-2'
+          className='bg-slate-7 rounded-[4px] h-fit p-2'
         >
           Add card
         </button>

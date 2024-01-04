@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Minus } from 'lucide-react'
 import { Card, Id } from '../types'
 import { useColumns } from './store/useColumns'
@@ -11,6 +11,8 @@ interface CardProps {
 }
 
 export const CardContainer = (props: CardProps) => {
+  const [isImgHovered, setIsImgHovered] = useState(false)
+
   const { id, title, description, srcImage } = props.card
 
   const { editCardTitle, editCardDescription, addCardImage, deleteCard } =
@@ -79,40 +81,46 @@ export const CardContainer = (props: CardProps) => {
       }}
       className='h-fit w-full gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col'
     >
-      <label className='w-full flex'>
+      <label className='w-full flex items-center'>
         <input
           value={title}
           onChange={e => handleTitleChange(e.target.value)}
-          className='bg-[#1E2733] px-4 pt-2 flex-1'
+          className='bg-[#1E2733] rounded-[4px] mr-2 px-4 pt-2 flex-grow'
         />
-        <Minus onClick={handleDeleteCard} />
+        <Minus onClick={handleDeleteCard} className='cursor-pointer' />
       </label>
 
       <label>
         <textarea
           value={description}
           onChange={e => handleDescriptionChange(e.target.value)}
-          className='bg-[#1E2733] text-customWhite h-[100px] w-full'
+          className='bg-[#1E2733] rounded-[4px] text-customWhite h-[100px] w-full'
         />
       </label>
 
-      {srcImage !== '' && (
-        <button
-          onClick={() => {
-            deleteImage()
-          }}
-          className='bg-[#1E2733] py-2 hover:bg-slate-700'
-        >
-          Delete
-        </button>
-      )}
+      <div
+        className='relative'
+        onMouseEnter={() => setIsImgHovered(true)}
+        onMouseLeave={() => setIsImgHovered(false)}
+      >
+        {srcImage !== '' && isImgHovered && (
+          <button
+            onClick={() => {
+              deleteImage()
+            }}
+            className='absolute top-0 left-0 right-0 z-20 bg-[#1E2733] rounded-[4px] py-2 hover:bg-slate-700'
+          >
+            Delete
+          </button>
+        )}
 
-      <img
-        src={srcImage ? srcImage : ''}
-        ref={imgRef}
-        alt='Image Preview'
-        style={{ display: srcImage ? 'block' : 'none' }}
-      />
+        <img
+          src={srcImage ? srcImage : ''}
+          ref={imgRef}
+          alt='Image Preview'
+          style={{ display: srcImage ? 'block' : 'none' }}
+        />
+      </div>
     </div>
   )
 }
