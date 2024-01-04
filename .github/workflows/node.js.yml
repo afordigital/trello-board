@@ -16,22 +16,21 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
-    - name: Set up Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-
+    - name: Set up pnpm
     - uses: pnpm/action-setup@v2
       with:
         version: 8
 
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'pnpm'
+
     - name: Install dependencies
-      run: pnpm install
+      run: pnpm i
 
-    - name: Build
-      run: pnpm build
-
-    - name: unit tests
+    - name: Run unit tests
       run: pnpm test
