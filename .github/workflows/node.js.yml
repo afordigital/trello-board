@@ -7,31 +7,35 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [20.x]
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Setup Node.js (v20)
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
 
-    - uses: pnpm/action-setup@v2
-      with:
-        version: 8
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 8.14.0
 
-    - name: Install dependencies
-      run: pnpm install
+      - name: Cache pnpm Store
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-
 
-    - name: Build
-      run: pnpm build
-
-    - name: unit tests
-      run: pnpm test
+      - name: Install dependencies
+        run: pnpm install
+  
+      - name: Build
+        run: pnpm build
+  
+      - name: unit tests
+        run: pnpm test
