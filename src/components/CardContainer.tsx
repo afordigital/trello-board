@@ -2,7 +2,8 @@ import { useRef } from 'react'
 import { Minus } from 'lucide-react'
 import { Card, Id } from '../types'
 import { useColumns } from './store/useColumns'
-import { handleReader, handleReaderResponse } from '../utils/handleReader'
+import { handleReaderResponse } from '../utils/handleReader'
+import { useSortableConf } from '../hooks/useSortableConf'
 
 interface CardProps {
   card: Card
@@ -14,6 +15,9 @@ export const CardContainer = (props: CardProps) => {
 
   const { editCardTitle, editCardDescription, addCardImage, deleteCard } =
     useColumns()
+
+  const { isDragging, style, setNodeRef, attributes, listeners } =
+    useSortableConf(undefined, props.card)
 
   const handleTitleChange = (newTitle: string) => {
     editCardTitle(newTitle, id, props.columnId)
@@ -51,8 +55,22 @@ export const CardContainer = (props: CardProps) => {
     deleteCard(id, props.columnId)
   }
 
+  if (isDragging) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className='h-fit w-full opacity-50 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md'
+      ></div>
+    )
+  }
+
   return (
     <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
       onDragOver={e => {
         e.preventDefault()
       }}

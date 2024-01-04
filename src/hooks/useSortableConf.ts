@@ -1,8 +1,8 @@
 import { useSortable } from '@dnd-kit/sortable'
-import { Column } from '../types'
+import { Card, Column } from '../types'
 import { CSS } from '@dnd-kit/utilities'
 
-export const useSortableConf = (column: Column) => {
+export const useSortableConf = (column?: Column, card?: Card) => {
   const {
     setNodeRef,
     attributes,
@@ -11,10 +11,10 @@ export const useSortableConf = (column: Column) => {
     transition,
     isDragging
   } = useSortable({
-    id: column.id,
+    id: column ? column.id : card!.id,
     data: {
-      type: 'Column',
-      column
+      type: column ? 'Column' : 'Card',
+      item: column ? column : card
     }
   })
 

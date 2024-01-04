@@ -4,6 +4,8 @@ import { CardContainer } from './CardContainer'
 import { useColumns } from './store/useColumns'
 import { generateId } from '../utils/generateId'
 import { useSortableConf } from '../hooks/useSortableConf'
+import { SortableContext } from '@dnd-kit/sortable'
+import { useMemo } from 'react'
 
 type Props = {
   column: Column
@@ -12,6 +14,9 @@ type Props = {
 
 export const ColumnContainer = (props: Props) => {
   const { column, deleteColumn } = props
+  const cardIds = useMemo(() => {
+    return column.cards.map(card => card.id)
+  }, [column.cards])
 
   const { editColumnTitle, addCard } = useColumns()
 
@@ -81,11 +86,13 @@ export const ColumnContainer = (props: Props) => {
         >
           Add card
         </button>
-        {column.cards
-          .map(card => (
-            <CardContainer key={card.id} card={card} columnId={column.id} />
-          ))
-          .reverse()}
+        <SortableContext items={cardIds}>
+          {column.cards
+            .map(card => (
+              <CardContainer key={card.id} card={card} columnId={column.id} />
+            ))
+            .reverse()}
+        </SortableContext>
       </div>
     </div>
   )
