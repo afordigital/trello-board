@@ -4,17 +4,18 @@ import { createColumn } from '../../utils/createColumn'
 
 describe('create new column', () => {
   it.each([
-    { columnsNumber: 2, expectedTitle: 'Column 2', expectedId: 834 },
-    { columnsNumber: 1, expectedTitle: 'Column 1', expectedId: 834 },
-    { columnsNumber: -5, expectedTitle: 'Column -5', expectedId: 834 },
-    { columnsNumber: 2.4, expectedTitle: 'Column 2.4', expectedId: 834 }
+    { columnNumber: 2, expectedTitle: 'Column 2', expectedId: 834 },
+    { columnNumber: 1, expectedTitle: 'Column 1', expectedId: 834 },
+    { columnNumber: -5, expectedTitle: 'Column -5', expectedId: 834 },
+    { columnNumber: 2.4, expectedTitle: 'Column 2.4', expectedId: 834 }
   ])(
-    'createColumn("$columnsNumber") -> $expectedTitle, $expectedId',
-    ({ columnsNumber, expectedTitle }) => {
-      expect(createColumn(columnsNumber).title).toBe(expectedTitle)
-      expect(typeof createColumn(columnsNumber).id).toBe('number')
-      // This id could be a number between 0 and 10000. With the toBe(4) assert the test was not deterministic and sometimes failed.
-      expect(createColumn(columnsNumber).id.toString().length).toBeLessThanOrEqual(5)
+    'createColumn("$columnNumber") -> $expectedTitle, $expectedId',
+    ({ columnNumber, expectedTitle }) => {
+      const column = createColumn(columnNumber)
+      expect(column.title).toBe(expectedTitle)
+      expect(typeof column.id).toBe('string')
+      // This id is a UUID randomly generated using crypto. Its length is 36.
+      expect(column.id.toString().length).toBeLessThanOrEqual(36)
     }
   )
 })
