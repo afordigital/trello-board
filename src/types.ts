@@ -7,7 +7,7 @@ export type Column = {
 }
 
 export type Card = {
-  id: number
+  id: Id
   title: string
   description: string
   srcImage: string
