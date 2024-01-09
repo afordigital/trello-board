@@ -56,36 +56,15 @@ export const CardContainer = (props: CardProps) => {
     )
   }
 
-  const cardRef = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (!isOpened || !cardRef.current) return
-      if (!event.target.contains(cardRef.current)) {
-        setIsOpened(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
 
   return (
     <>
       {isOpened && (
-        <div
-          ref={cardRef}
-          className='fixed w-full h-full  top-0 left-0'
-          onClick={closeDetails}
-        >
           <CardDetail
             closeDetails={closeDetails}
             columnId={props.columnId}
             card={props.card}
-          />
-        </div>
+            />
       )}
       <div
         ref={setNodeRef}
