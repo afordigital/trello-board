@@ -48,7 +48,7 @@ export const ColumnContainer = (props: Props) => {
     <div
       ref={setNodeRef}
       style={style}
-      className='w-[350px] h-[500px] max-h-[500px] flex flex-col'
+      className='w-[350px] h-fit flex flex-col'
     >
       <div className='flex p-4 mb-4 h-[60px] flex items-center justify-between'>
         <label className='flex items-center'>
@@ -79,7 +79,7 @@ export const ColumnContainer = (props: Props) => {
         </div>
       </div>
 
-      <div className='flex flex-grow flex-col gap-y-4'>
+      <div className='flex flex-col gap-y-4'>
         <button
           onClick={() => {
             addNewCard()
@@ -89,11 +89,13 @@ export const ColumnContainer = (props: Props) => {
           Add card
         </button>
         <SortableContext items={cardIds}>
-          {column.cards
-            .map(card => (
-              <CardContainer key={card.id} card={card} columnId={column.id} />
-            ))
-            .reverse()}
+          <div className='max-h-[500px] h-[500px] overflow-y-scroll space-y-4'>
+            {column.cards
+              .map(card => (
+                <CardContainer key={card.id} card={card} columnId={column.id} />
+              ))
+              .reverse()}
+          </div>
         </SortableContext>
       </div>
     </div>

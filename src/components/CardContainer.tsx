@@ -12,13 +12,10 @@ interface CardProps {
 }
 
 export const CardContainer = (props: CardProps) => {
-  const [isImgHovered, setIsImgHovered] = useState(false)
   const [isOpened, setIsOpened] = useState(false)
+  const { id, title, srcImage, imageCovered } = props.card
 
-  const { id, title, description, srcImage, imageCovered } = props.card
-
-  const { editCardTitle, editCardDescription, addCardImage, deleteCard } =
-    useColumns()
+  const { editCardTitle, addCardImage, deleteCard } = useColumns()
 
   const { isDragging, style, setNodeRef, attributes, listeners } =
     useSortableConf(undefined, props.card)
@@ -27,15 +24,9 @@ export const CardContainer = (props: CardProps) => {
     editCardTitle(newTitle, id, props.columnId)
   }
 
-  const handleDescriptionChange = (newDescription: string) => {
-    editCardDescription(newDescription, id, props.columnId)
-  }
-
   const closeDetails = () => {
     setIsOpened(false)
   }
-
-  const imgRef = useRef<HTMLImageElement | null>(null)
 
   const handleImageDropped = async (e: React.DragEvent<HTMLElement>) => {
     e.preventDefault()
@@ -44,19 +35,11 @@ export const CardContainer = (props: CardProps) => {
     const srcImg = await handleReaderResponse(file)
 
     if (srcImg) {
-      if (!imgRef.current) return
-      imgRef.current.src = srcImg as string
-      imgRef.current.style.display = 'block'
-
-      addCardImage(imgRef.current.src, id, props.columnId)
+      if (!srcImg) return
+      addCardImage(srcImg as string, id, props.columnId)
     } else {
       alert('Image type is not valid')
     }
-  }
-
-  const deleteImage = () => {
-    if (srcImage === '') return
-    addCardImage('', id, props.columnId)
   }
 
   const handleDeleteCard = () => {
@@ -73,13 +56,42 @@ export const CardContainer = (props: CardProps) => {
     )
   }
 
+  const cardRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (!isOpened || !cardRef.current) return
+      if (!event.target.contains(cardRef.current)) {
+        setIsOpened(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
   return (
     <>
-      {isOpened && <CardDetail closeDetails={closeDetails} card={props.card} />}
+      {isOpened && (
+        <div
+          ref={cardRef}
+          className='fixed w-full h-full  top-0 left-0'
+          onClick={closeDetails}
+        >
+          <CardDetail
+            closeDetails={closeDetails}
+            columnId={props.columnId}
+            card={props.card}
+          />
+        </div>
+      )}
       <div
         ref={setNodeRef}
         style={style}
-        onClick={() => {
+        onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+          if ((e.target as HTMLInputElement).id === 'input-name') return
           setIsOpened(true)
         }}
         onDragOver={e => {
@@ -91,41 +103,18 @@ export const CardContainer = (props: CardProps) => {
         <label className='w-full flex items-center'>
           <input
             value={title}
+            id='input-name'
             onChange={e => handleTitleChange(e.target.value)}
-            className='bg-[#1E2733] rounded-[4px] mr-2 px-4 pt-2 flex-grow'
+            className='bg-transparent rounded-[4px] mr-2 px-4 pt-2 flex-grow'
           />
           <Minus onClick={handleDeleteCard} className='cursor-pointer' />
           <GripVertical {...attributes} {...listeners} />
         </label>
 
-        {/* <label>
-        <textarea
-          value={description}
-          onChange={e => handleDescriptionChange(e.target.value)}
-          className='bg-[#1E2733] rounded-[4px] text-customWhite h-[100px] w-full'
-        />
-      </label> */}
-
         {imageCovered && (
-          <div
-            className='relative'
-            onMouseEnter={() => setIsImgHovered(true)}
-            onMouseLeave={() => setIsImgHovered(false)}
-          >
-            {srcImage !== '' && isImgHovered && (
-              <button
-                onClick={() => {
-                  deleteImage()
-                }}
-                className='absolute top-0 left-0 right-0 z-20 bg-[#1E2733] rounded-[4px] py-2 hover:bg-slate-700'
-              >
-                Delete
-              </button>
-            )}
-
+          <div className='relative'>
             <img
               src={srcImage ? srcImage : ''}
-              ref={imgRef}
               alt='Image Preview'
               style={{ display: srcImage ? 'block' : 'none' }}
             />

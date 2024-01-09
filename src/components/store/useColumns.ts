@@ -16,7 +16,7 @@ interface ColumnState {
     cardId: Id,
     columnId: Id
   ) => void
-  editCardCover: (newState: boolean, cardId: Id, columnId: Id) => void
+  editCardIsCover: (newState: boolean, cardId: Id, columnId: Id) => void
 }
 
 export const useColumns = create<ColumnState>()(
@@ -115,7 +115,7 @@ export const useColumns = create<ColumnState>()(
             return column
           })
         })),
-      editCardCover: (newState, cardId, columnId) =>
+      editCardIsCover: (newState, cardId, columnId) =>
         set(prev => ({
           columns: prev.columns.map(column => {
             if (column.id === columnId) {

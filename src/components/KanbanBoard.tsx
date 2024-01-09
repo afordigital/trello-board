@@ -12,7 +12,11 @@ import {
   useSensor,
   useSensors
 } from '@dnd-kit/core'
-import { SortableContext, arrayMove, horizontalListSortingStrategy } from '@dnd-kit/sortable'
+import {
+  SortableContext,
+  arrayMove,
+  horizontalListSortingStrategy
+} from '@dnd-kit/sortable'
 import { useColumns } from './store/useColumns'
 import { createPortal } from 'react-dom'
 import { PlusCircle } from 'lucide-react'
@@ -78,13 +82,16 @@ export const KanbanBoard = () => {
       >
         <div className='m-auto flex min-h-screen w-full mt-8 overflow-x-auto overflow-y-hidden px-[40px]'>
           <div className='flex'>
-            <SortableContext items={columnsId} strategy={horizontalListSortingStrategy} >
-              <div className='flex gap-x-4'>
-                {columns.map((column, index) => (
+            <SortableContext
+              items={columnsId}
+              strategy={horizontalListSortingStrategy}
+            >
+              <div className='flex gap-x-4 h-[300px] h-fit'>
+                {columns.map(column => (
                   <ColumnContainer
+                    key={column.id}
                     column={column}
                     deleteColumn={deleteColumn}
-                    key={index}
                   />
                 ))}
               </div>
