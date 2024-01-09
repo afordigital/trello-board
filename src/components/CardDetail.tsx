@@ -35,7 +35,13 @@ export const CardDetail = (props: Props) => {
       id='card-container'
       className='fixed w-screen h-screen flex justify-center items-center inset-1/2 transform -translate-x-1/2 -translate-y-1/2'
     >
-      <div className='w-fit min-w-[500px] flex flex-col gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor'>
+      <div
+        className='absolute w-screen h-screen flex justify-center items-center left-0 top-0'
+        onClick={() => {
+          props.closeDetails()
+        }}
+      />
+      <div className='w-fit min-w-[500px] z-1 flex flex-col gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor'>
         <X
           onClick={() => {
             props.closeDetails()
