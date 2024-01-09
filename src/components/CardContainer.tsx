@@ -51,19 +51,41 @@ export const CardContainer = (props: CardProps) => {
       <div
         ref={setNodeRef}
         style={style}
-        className="h-fit w-full opacity-50 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md"
-      />
+        className='h-fit w-full opacity-50 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md'
+      ></div>
     )
   }
+
+  const cardRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (!isOpened || !cardRef.current) return
+      if (!event.target.contains(cardRef.current)) {
+        setIsOpened(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   return (
     <>
       {isOpened && (
-        <CardDetail
-          closeDetails={closeDetails}
-          columnId={props.columnId}
-          card={props.card}
-        />
+        <div
+          ref={cardRef}
+          className='fixed w-full h-full  top-0 left-0'
+          onClick={closeDetails}
+        >
+          <CardDetail
+            closeDetails={closeDetails}
+            columnId={props.columnId}
+            card={props.card}
+          />
+        </div>
       )}
       <div
         ref={setNodeRef}
@@ -71,30 +93,29 @@ export const CardContainer = (props: CardProps) => {
         onClick={(e: React.MouseEvent<HTMLInputElement>) => {
           if ((e.target as HTMLInputElement).id === 'input-name') return
           setIsOpened(true)
-          e.stopPropagation()
         }}
-        onDragOver={(e) => {
+        onDragOver={e => {
           e.preventDefault()
         }}
         onDrop={handleImageDropped}
-        className="h-fit w-full gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col"
+        className='h-fit w-full gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col'
       >
-        <label className="w-full flex items-center">
+        <label className='w-full flex items-center'>
           <input
             value={title}
-            id="input-name"
-            onChange={(e) => handleTitleChange(e.target.value)}
-            className="bg-transparent rounded-[4px] mr-2 px-4 pt-2 flex-grow"
+            id='input-name'
+            onChange={e => handleTitleChange(e.target.value)}
+            className='bg-transparent rounded-[4px] mr-2 px-4 pt-2 flex-grow'
           />
-          <Minus onClick={handleDeleteCard} className="cursor-pointer" />
+          <Minus onClick={handleDeleteCard} className='cursor-pointer' />
           <GripVertical {...attributes} {...listeners} />
         </label>
 
         {imageCovered && (
-          <div className="relative">
+          <div className='relative'>
             <img
               src={srcImage ? srcImage : ''}
-              alt="Image Preview"
+              alt='Image Preview'
               style={{ display: srcImage ? 'block' : 'none' }}
             />
           </div>
