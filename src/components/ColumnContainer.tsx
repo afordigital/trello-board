@@ -40,7 +40,7 @@ export const ColumnContainer = (props: Props) => {
 
   if (isDragging) {
     return (
-      <div  ref={setNodeRef} style={style} className='bg-columnBackgroundColor opacity-40 border-4 border-rose-500 w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col'></div>
+      <div  ref={setNodeRef} style={style} className='bg-columnBackgroundColor opacity-40 border-4 border-gray-800 w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col'></div>
     )
   }
 
@@ -89,7 +89,7 @@ export const ColumnContainer = (props: Props) => {
           Add card
         </button>
         <SortableContext items={cardIds}>
-          <div className='max-h-[500px] h-[500px] overflow-y-auto space-y-4 pr-2'>
+          <div className='max-h-[500px] h-[500px] overflow-y-auto space-y-4 px-1'>
             {column.cards
               .map(card => (
                 <CardContainer key={card.id} card={card} columnId={column.id} />
