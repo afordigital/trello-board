@@ -13,3 +13,5 @@ export type Card = {
   srcImage: string
   imageCovered: boolean
 }
+
+export type ActiveCard = Card & { columnId: Id }

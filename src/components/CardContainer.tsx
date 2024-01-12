@@ -18,7 +18,7 @@ export const CardContainer = (props: CardProps) => {
   const { editCardTitle, addCardImage, deleteCard } = useColumns()
 
   const { isDragging, style, setNodeRef, attributes, listeners } =
-    useSortableConf(undefined, props.card)
+    useSortableConf(undefined, {...props.card, columnId: props.columnId})
 
   const handleTitleChange = (newTitle: string) => {
     editCardTitle(newTitle, id, props.columnId)
@@ -77,7 +77,7 @@ export const CardContainer = (props: CardProps) => {
           e.preventDefault()
         }}
         onDrop={handleImageDropped}
-        className='h-fit w-full gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col'
+        className='h-fit w-full gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col text-white'
       >
         <label className='w-full flex items-center'>
           <input
