@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
-import { Column, Id } from '../types'
+import { ActiveCard, Card, Column, Id } from '../types'
 import { ColumnContainer } from './ColumnContainer'
 import { createColumn } from '../utils/createColumn'
 import { filterColumn } from '../utils/filterColumn'
 import {
   DndContext,
   DragEndEvent,
+  DragOverEvent,
   DragOverlay,
   DragStartEvent,
   PointerSensor,
@@ -20,10 +21,12 @@ import {
 import { useColumns } from './store/useColumns'
 import { createPortal } from 'react-dom'
 import { PlusCircle } from 'lucide-react'
+import { CardContainer } from './CardContainer'
 
 export const KanbanBoard = () => {
+  const { columns, setCards, setColumn, addColumn } = useColumns()
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
-  const { columns, setColumn, addColumn } = useColumns()
+  const [activeCard, setActiveCard] = useState<ActiveCard | null>(null)
   const columnsId = useMemo(() => columns.map(col => col.id), [columns])
 
   const createNewColumn = () => {
@@ -42,9 +45,15 @@ export const KanbanBoard = () => {
       setActiveColumn(event.active.data.current.item)
       return
     }
+    if (event.active.data.current?.type === "Card") {
+      setActiveCard(event.active.data.current.item);
+      return;
+    }
   }
 
   const onDragEnd = (event: DragEndEvent) => {
+    setActiveCard(null)
+    setActiveColumn(null)
     const { active, over } = event
 
     if (!over) return
@@ -65,57 +74,95 @@ export const KanbanBoard = () => {
     setColumn(arrayMove(columns, activeColumnIndex, overColumnIndex))
   }
 
+  const onDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+    const { current } = active.data;
+    const currentCard = current?.item as ActiveCard | undefined;
+
+    if (!over || !currentCard) return;
+
+    const activeId = active.id;
+    const overId = over.id;
+
+    if (activeId === overId) return;
+
+    const isActiveATask = active.data.current?.type === "Card";
+    const isOverATask = over.data.current?.type === "Card";
+    const currentOverCard = over.data.current?.item as ActiveCard | undefined;
+
+    if (!isActiveATask) return;
+
+
+    if (isActiveATask && isOverATask) {
+      const selectedColumn = columns.find((col) => col.id === currentCard.columnId);
+      if (!selectedColumn) return;
+
+      const tasks = selectedColumn.cards;
+      const activeIndex = tasks.findIndex((t) => t.id === activeId);
+      const overIndex = tasks.findIndex((t) => t.id === overId);
+
+      const isOverACardInSameColumn = currentCard.columnId === currentOverCard?.columnId;
+
+      if (isOverACardInSameColumn) {
+        setCards(arrayMove(tasks, activeIndex, overIndex), selectedColumn.id)
+      }
+    }
+  }
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 300 // 300px
+        distance: 10 // 10px
       }
     })
   )
 
   return (
-    <div>
+    <div
+      className='mx-auto flex flex-1 w-full items-center overflow-x-auto px-[40px]'>
       <DndContext
         sensors={sensors}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
+        onDragOver={onDragOver}
       >
-        <div className='m-auto flex min-h-screen w-full mt-8 overflow-x-auto overflow-y-hidden px-[40px]'>
-          <div className='flex'>
-            <SortableContext
-              items={columnsId}
-              strategy={horizontalListSortingStrategy}
-            >
-              <div className='flex gap-x-4 h-[300px] h-fit'>
-                {columns.map(column => (
-                  <ColumnContainer
-                    key={column.id}
-                    column={column}
-                    deleteColumn={deleteColumn}
-                  />
-                ))}
-              </div>
-              <button
-                onClick={createNewColumn}
-                className='h-[60px] w-[350px] flex items-center justify-center gap-2 min-w-[350px] cursor-pointer ml-4 rounded-lg bg-mainBackgroundColor border-2 border-columnBackgroundColor'
-              >
-                <PlusCircle />
-                Add column
-              </button>
-            </SortableContext>
-          </div>
-          {createPortal(
-            <DragOverlay>
-              {activeColumn && (
+        <div className='mx-auto flex'>
+          <SortableContext
+            items={columnsId}
+            strategy={horizontalListSortingStrategy}
+          >
+            <div className='flex gap-x-4 h-[300px] h-fit'>
+              {columns.map(column => (
                 <ColumnContainer
-                  column={activeColumn}
+                  key={column.id}
+                  column={column}
                   deleteColumn={deleteColumn}
                 />
-              )}
-            </DragOverlay>,
-            document.body
-          )}
+              ))}
+            </div>
+            <button
+              onClick={createNewColumn}
+              className='h-[60px] w-[350px] flex items-center justify-center gap-2 min-w-[350px] cursor-pointer ml-4 rounded-lg bg-mainBackgroundColor border-2 border-columnBackgroundColor'
+            >
+              <PlusCircle />
+              Add column
+            </button>
+          </SortableContext>
         </div>
+        {createPortal(
+          <DragOverlay>
+            {activeColumn && (
+              <ColumnContainer
+                column={activeColumn}
+                deleteColumn={deleteColumn}
+              />
+            )}
+            {activeCard && (
+              <CardContainer card={activeCard} columnId={activeCard.columnId} />
+            )}
+          </DragOverlay>,
+          document.body
+        )}
       </DndContext>
     </div>
   )

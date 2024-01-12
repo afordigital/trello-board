@@ -23,12 +23,6 @@ export const ColumnContainer = (props: Props) => {
   const { isDragging, style, setNodeRef, attributes, listeners } =
     useSortableConf(column)
 
-  if (isDragging) {
-    return (
-      <div className='bg-columnBackgroundColor opacity-40 border-4 border-rose-500 w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col'></div>
-    )
-  }
-
   const onInputChange = (newTitle: string) => {
     editColumnTitle(newTitle, column.id)
   }
@@ -44,11 +38,17 @@ export const ColumnContainer = (props: Props) => {
     addCard(newCard, column.id)
   }
 
+  if (isDragging) {
+    return (
+      <div  ref={setNodeRef} style={style} className='bg-columnBackgroundColor opacity-40 border-4 border-gray-800 w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col'></div>
+    )
+  }
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className='w-[350px] h-fit flex flex-col'
+      className='w-[350px] h-fit flex flex-col text-white'
     >
       <div className='flex p-4 mb-4 h-[60px] flex items-center justify-between'>
         <label className='flex items-center'>
@@ -89,7 +89,7 @@ export const ColumnContainer = (props: Props) => {
           Add card
         </button>
         <SortableContext items={cardIds}>
-          <div className='max-h-[500px] h-[500px] overflow-y-scroll space-y-4'>
+          <div className='max-h-[500px] h-[500px] overflow-y-auto space-y-4 px-1'>
             {column.cards
               .map(card => (
                 <CardContainer key={card.id} card={card} columnId={column.id} />
