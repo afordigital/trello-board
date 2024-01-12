@@ -4,8 +4,9 @@ import { useColumns } from './store/useColumns'
 import { generateId } from '../utils/generateId'
 import { useSortableConf } from '../hooks/useSortableConf'
 import { SortableContext } from '@dnd-kit/sortable'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Trash2, GripVertical } from 'lucide-react'
+import DeleteConfirmation from './DeleteConfirmation';
 
 type Props = {
   column: Column
@@ -17,6 +18,8 @@ export const ColumnContainer = (props: Props) => {
   const cardIds = useMemo(() => {
     return column.cards.map(card => card.id)
   }, [column.cards])
+
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const { editColumnTitle, addCard } = useColumns()
 
@@ -44,6 +47,19 @@ export const ColumnContainer = (props: Props) => {
     addCard(newCard, column.id)
   }
 
+  const handleConfirmationDelete = () => {
+    if(column.cards.length > 0) {
+      setShowDeleteConfirmation(true)
+    }else {
+      handleDeleteCard()
+    }
+  };
+
+  const handleDeleteCard = () => { 
+    deleteColumn(column.id)
+  }
+
+
   return (
     <div
       ref={setNodeRef}
@@ -68,9 +84,7 @@ export const ColumnContainer = (props: Props) => {
             </p>
           )}
           <button
-            onClick={() => {
-              deleteColumn(column.id)
-            }}
+            onClick={handleConfirmationDelete}
             className='bg-transparent'
           >
             <Trash2 size={'18px'} />
@@ -98,6 +112,13 @@ export const ColumnContainer = (props: Props) => {
           </div>
         </SortableContext>
       </div>
+      <DeleteConfirmation
+        onSucces={handleDeleteCard}
+        onCancel={()=> setShowDeleteConfirmation(false)}
+        open={showDeleteConfirmation}
+        title='Delete column'
+        message='This column has card, are you sure to delete?'
+      />
     </div>
   )
 }
