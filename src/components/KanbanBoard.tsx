@@ -68,7 +68,7 @@ export const KanbanBoard = () => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 300 // 300px
+        distance: 10 // 10px
       }
     })
   )
