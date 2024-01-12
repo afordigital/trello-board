@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
-import { Column, Id } from '../types'
+import { ActiveCard, Card, Column, Id } from '../types'
 import { ColumnContainer } from './ColumnContainer'
 import { createColumn } from '../utils/createColumn'
 import { filterColumn } from '../utils/filterColumn'
 import {
   DndContext,
   DragEndEvent,
+  DragOverEvent,
   DragOverlay,
   DragStartEvent,
   PointerSensor,
@@ -20,10 +21,12 @@ import {
 import { useColumns } from './store/useColumns'
 import { createPortal } from 'react-dom'
 import { PlusCircle } from 'lucide-react'
+import { CardContainer } from './CardContainer'
 
 export const KanbanBoard = () => {
+  const { columns, setCards, setColumn, addColumn } = useColumns()
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
-  const { columns, setColumn, addColumn } = useColumns()
+  const [activeCard, setActiveCard] = useState<ActiveCard | null>(null)
   const columnsId = useMemo(() => columns.map(col => col.id), [columns])
 
   const createNewColumn = () => {
@@ -42,9 +45,15 @@ export const KanbanBoard = () => {
       setActiveColumn(event.active.data.current.item)
       return
     }
+    if (event.active.data.current?.type === "Card") {
+      setActiveCard(event.active.data.current.item);
+      return;
+    }
   }
 
   const onDragEnd = (event: DragEndEvent) => {
+    setActiveCard(null)
+    setActiveColumn(null)
     const { active, over } = event
 
     if (!over) return
@@ -65,6 +74,41 @@ export const KanbanBoard = () => {
     setColumn(arrayMove(columns, activeColumnIndex, overColumnIndex))
   }
 
+  const onDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+    const { current } = active.data;
+    const currentCard = current?.item as ActiveCard | undefined;
+
+    if (!over || !currentCard) return;
+
+    const activeId = active.id;
+    const overId = over.id;
+
+    if (activeId === overId) return;
+
+    const isActiveATask = active.data.current?.type === "Card";
+    const isOverATask = over.data.current?.type === "Card";
+    const currentOverCard = over.data.current?.item as ActiveCard | undefined;
+
+    if (!isActiveATask) return;
+
+
+    if (isActiveATask && isOverATask) {
+      const selectedColumn = columns.find((col) => col.id === currentCard.columnId);
+      if (!selectedColumn) return;
+
+      const tasks = selectedColumn.cards;
+      const activeIndex = tasks.findIndex((t) => t.id === activeId);
+      const overIndex = tasks.findIndex((t) => t.id === overId);
+
+      const isOverACardInSameColumn = currentCard.columnId === currentOverCard?.columnId;
+
+      if (isOverACardInSameColumn) {
+        setCards(arrayMove(tasks, activeIndex, overIndex), selectedColumn.id)
+      }
+    }
+  }
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -80,6 +124,7 @@ export const KanbanBoard = () => {
         sensors={sensors}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
+        onDragOver={onDragOver}
       >
         <div className='mx-auto flex'>
           <SortableContext
@@ -111,6 +156,9 @@ export const KanbanBoard = () => {
                 column={activeColumn}
                 deleteColumn={deleteColumn}
               />
+            )}
+            {activeCard && (
+              <CardContainer card={activeCard} columnId={activeCard.columnId} />
             )}
           </DragOverlay>,
           document.body
