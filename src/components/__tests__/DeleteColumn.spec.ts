@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest'
 import { filterColumn } from '../../utils/filterColumn'
 import {Column} from "../../types";
 
-const column1 : Column = { id: 1, title: 'Column 1', cards: [], type: 'Column' }
-const column2 : Column = { id: 2, title: 'Column 2', cards: [], type: 'Column' }
-const column3 : Column = { id: 3, title: 'Column 3', cards: [], type: 'Column' }
+const column1 : Column = { id: 1, title: 'Column 1', cards: [] }
+const column2 : Column = { id: 2, title: 'Column 2', cards: [] }
+const column3 : Column = { id: 3, title: 'Column 3', cards: [] }
 
 describe('delete one column in our array of columns', () => {
   it.each([

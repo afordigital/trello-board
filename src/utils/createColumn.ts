@@ -6,6 +6,5 @@ export const createColumn = (columnNumber: number) : Column => {
     id: generateId(),
     title: `Column ${columnNumber}`,
     cards: [],
-    type: 'Column'
   }
 }

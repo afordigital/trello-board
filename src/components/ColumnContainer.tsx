@@ -37,7 +37,6 @@ export const ColumnContainer = (props: Props) => {
       description: '',
       srcImage: '',
       imageCovered: false,
-      type: 'Card'
     }
     addCard(newCard, column.id)
   }
