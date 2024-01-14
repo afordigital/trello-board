@@ -1,4 +1,4 @@
-import { Column, Id } from '../types'
+import {Card, Column, Id} from '../types'
 import { CardContainer } from './CardContainer'
 import { useColumns } from './store/useColumns'
 import { generateId } from '../utils/generateId'
@@ -31,12 +31,13 @@ export const ColumnContainer = (props: Props) => {
   }
 
   const addNewCard = () => {
-    const newCard = {
+    const newCard : Card = {
       id: generateId(),
       title: 'New card',
       description: '',
       srcImage: '',
-      imageCovered: false
+      imageCovered: false,
+      type: 'Card'
     }
     addCard(newCard, column.id)
   }
@@ -119,7 +120,7 @@ export const ColumnContainer = (props: Props) => {
         onCancel={()=> setShowDeleteConfirmation(false)}
         open={showDeleteConfirmation}
         title='Delete column'
-        message='This column has card, are you sure to delete?'
+        message='This column has at least one card, are you sure to delete it?'
       />
     </div>
   )
