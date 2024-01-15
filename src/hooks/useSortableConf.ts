@@ -13,8 +13,6 @@ const getSortableItemType = (item: SortableItem) => {
 }
 
 export const useSortableConf = (sortableItem: SortableItem) => {
-  if(!sortableItem) throw new Error('You must pass a column or card to useSortableConf hook')
-  
   const {
     setNodeRef,
     attributes,
