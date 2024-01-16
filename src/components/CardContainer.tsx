@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Minus, GripVertical } from 'lucide-react'
 import { Card, Id } from '../types'
 import { useColumns } from './store/useColumns'
@@ -18,7 +18,7 @@ export const CardContainer = (props: CardProps) => {
   const { editCardTitle, addCardImage, deleteCard } = useColumns()
 
   const { isDragging, style, setNodeRef, attributes, listeners } =
-    useSortableConf(undefined, {...props.card, columnId: props.columnId})
+    useSortableConf({...props.card, columnId: props.columnId} as Card)
 
   const handleTitleChange = (newTitle: string) => {
     editCardTitle(newTitle, id, props.columnId)

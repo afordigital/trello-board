@@ -1,40 +1,28 @@
 import { describe, expect, it } from 'vitest'
 
 import { filterColumn } from '../../utils/filterColumn'
+import {Column} from "../../types";
+
+const column1 : Column = { id: 1, title: 'Column 1', cards: [] }
+const column2 : Column = { id: 2, title: 'Column 2', cards: [] }
+const column3 : Column = { id: 3, title: 'Column 3', cards: [] }
 
 describe('delete one column in our array of columns', () => {
   it.each([
     {
-      columns: [
-        { id: 1, title: 'Column 1', cards: [] },
-        { id: 2, title: 'Column 2', cards: [] }
-      ],
+      columns: [column1, column2],
       idToDelete: 2,
-      expectedFilteredColumns: [{ id: 1, title: 'Column 1', cards: [] }]
+      expectedFilteredColumns: [column1]
     },
     {
-      columns: [
-        { id: 1, title: 'Column 1', cards: [] },
-        { id: 2, title: 'Column 2', cards: [] }
-      ],
+      columns: [column1, column2],
       idToDelete: 3,
-      expectedFilteredColumns: [
-        { id: 1, title: 'Column 1', cards: [] },
-        { id: 2, title: 'Column 2', cards: [] }
-      ]
+      expectedFilteredColumns: [column1, column2]
     },
     {
-      columns: [
-        { id: 1, title: 'Column 1', cards: [] },
-        { id: 2, title: 'Column 2', cards: [] },
-        { id: 2, title: 'Column 2', cards: [] },
-        { id: 3, title: 'Column 3', cards: [] }
-      ],
+      columns: [column1, column2, column2, column3],
       idToDelete: 2,
-      expectedFilteredColumns: [
-        { id: 1, title: 'Column 1', cards: [] },
-        { id: 3, title: 'Column 3', cards: [] }
-      ]
+      expectedFilteredColumns: [column1, column3]
     },
     {
       columns: [],
