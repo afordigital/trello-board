@@ -1,9 +1,9 @@
 import { generateId } from './generateId'
 
-export const createColumn = (length: number) => {
+export const createColumn = (columnNumber: number) => {
   return {
     id: generateId(),
-    title: `Column ${length}`,
+    title: `Column ${columnNumber}`,
     cards: []
   }
 }
