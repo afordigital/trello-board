@@ -24,7 +24,7 @@ import { PlusCircle } from 'lucide-react'
 import { CardContainer } from './CardContainer'
 
 export const KanbanBoard = () => {
-  const { columns, setCards, setColumn, addColumn,deleteCard } = useColumns()
+  const { columns, setCards, setColumn, addColumn,deleteCard,addCard } = useColumns()
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
   const [activeCard, setActiveCard] = useState<ActiveCard | null>(null)
   const columnsId = useMemo(() => columns.map(col => col.id), [columns])
@@ -108,6 +108,7 @@ export const KanbanBoard = () => {
       }
       else{
         deleteCard(tasks[activeIndex].id,currentCard!.columnId);
+        addCard(tasks[activeIndex],currentOverCard!.columnId)
       }
     }
   }
