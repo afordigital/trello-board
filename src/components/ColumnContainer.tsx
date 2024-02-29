@@ -15,9 +15,12 @@ type Props = {
 
 export const ColumnContainer = (props: Props) => {
   const { column, deleteColumn } = props
+  const cards = useColumns(state => state.cards)  
+  const cardsFromColumn = cards.filter(card => card.columnId === column.id)
+
   const cardIds = useMemo(() => {
-    return column.cards.map(card => card.id)
-  }, [column.cards])
+    return cardsFromColumn.map(card => card.id)
+  }, [cardsFromColumn])
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
@@ -37,13 +40,14 @@ export const ColumnContainer = (props: Props) => {
       description: '',
       srcImage: '',
       imageCovered: false,
+      columnId: column.id
     }
     addCard(newCard, column.id)
   }
 
 
   const handleConfirmationDelete = () => {
-    if(column.cards.length > 0) {
+    if(cardsFromColumn.length > 0) {
       setShowDeleteConfirmation(true)
     }else {
       handleDeleteCard()
@@ -80,9 +84,9 @@ export const ColumnContainer = (props: Props) => {
           </div>
         </label>
         <div className='flex gap-x-2 items-center'>
-          {column.cards.length > 0 && (
+          {cardsFromColumn.length > 0 && (
             <p className='bg-slate-7 w-[20px] h-[20px] text-sm text-center rounded-full'>
-              {column.cards.length}
+              {cardsFromColumn.length}
             </p>
           )}
           <button
@@ -106,9 +110,9 @@ export const ColumnContainer = (props: Props) => {
         </button>
         <SortableContext items={cardIds}>
           <div className='max-h-[500px] h-[500px] overflow-y-auto space-y-4 px-1'>
-            {column.cards
+            {cardsFromColumn
               .map(card => (
-                <CardContainer key={card.id} card={card} columnId={column.id} />
+                <CardContainer key={card.id} card={card}  />
               ))
               .reverse()}
           </div>

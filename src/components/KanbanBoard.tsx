@@ -24,7 +24,7 @@ import { PlusCircle } from 'lucide-react'
 import { CardContainer } from './CardContainer'
 
 export const KanbanBoard = () => {
-  const { columns, setCards, setColumn, addColumn,deleteCard,addCard } = useColumns()
+  const { columns, cards, setCards, setColumn, addColumn } = useColumns()
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
   const [activeCard, setActiveCard] = useState<ActiveCard | null>(null)
   const columnsId = useMemo(() => columns.map(col => col.id), [columns])
@@ -97,18 +97,13 @@ export const KanbanBoard = () => {
       const selectedColumn = columns.find((col) => col.id === currentCard.columnId);
       if (!selectedColumn) return;
 
-      const tasks = selectedColumn.cards;
-      const activeIndex = tasks.findIndex((t) => t.id === activeId);
-      const overIndex = tasks.findIndex((t) => t.id === overId);
+      const activeIndex = cards.findIndex((t) => t.id === activeId);
+      const overIndex = cards.findIndex((t) => t.id === overId);
 
       const isOverACardInSameColumn = currentCard.columnId === currentOverCard?.columnId;
 
       if (isOverACardInSameColumn) {
-        setCards(arrayMove(tasks, activeIndex, overIndex), selectedColumn.id)
-      }
-      else{
-        deleteCard(tasks[activeIndex].id,currentCard!.columnId);
-        addCard(tasks[activeIndex],currentOverCard!.columnId)
+        setCards(arrayMove(cards, activeIndex, overIndex), selectedColumn.id)
       }
     }
   }
@@ -162,7 +157,7 @@ export const KanbanBoard = () => {
               />
             )}
             {activeCard && (
-              <CardContainer card={activeCard} columnId={activeCard.columnId} />
+              <CardContainer card={activeCard}  />
             )}
           </DragOverlay>,
           document.body

@@ -5,26 +5,27 @@ import {  Card, Column, Id } from '../../types'
 
 interface ColumnState {
   columns: Column[]
+  cards: Card[]
   setColumn: (columns: Column[]) => void
   addColumn: (column: Column) => void
   editColumnTitle: (title: string, id: Id) => void
   addCard: (card: Card, id: Id) => void
   setCards: (cards: Card[], id: Id) => void
-  deleteCard: (cardId: Id, columnId: Id) => void
-  addCardImage: (newImg: string, cardId: Id, columnId: Id) => void
-  editCardTitle: (newTitle: string, cardId: Id, columnId: Id) => void
+  deleteCard: (cardId: Id) => void
+  addCardImage: (newImg: string, cardId: Id) => void
+  editCardTitle: (newTitle: string, cardId: Id) => void
   editCardDescription: (
     newDescription: string,
     cardId: Id,
-    columnId: Id
   ) => void
-  editCardIsCover: (newState: boolean, cardId: Id, columnId: Id) => void
+  editCardIsCover: (newState: boolean, cardId: Id) => void
 }
 
 export const useColumns = create<ColumnState>()(
   persist(
     set => ({
       columns: [],
+      cards: [],
       setColumn: value =>
         set({
           columns: value
@@ -36,114 +37,65 @@ export const useColumns = create<ColumnState>()(
             col.id === id ? { ...col, title } : col
           )
         })),
-      addCard: (card, id) =>
+      addCard: (card) =>
         set(state => ({
-          columns: state.columns.map(column => {
-            if (column.id === id) {
-              return { ...column, cards: [...column.cards, card] }
-            }
-            return column
-          })
+         cards: [...state.cards, card],
         })),
-      setCards: (cards, id) =>
+      setCards: (cards) =>
         set(state => ({
-          columns: state.columns.map(column => {
-            if (column.id === id) {
-              return { ...column, cards: cards }
-            }
-            return column
-          })
+          cards: cards
         })),
-      deleteCard: (cardId, columnId) =>
+      deleteCard: (cardId) =>
         set(prev => ({
-          columns: prev.columns.map(column => {
-            if (column.id === columnId) {
+         cards: prev.cards.filter(card => card.id !== cardId)
+        })),
+      addCardImage: (newImage, cardId) =>
+        set(prev => ({
+          cards: prev.cards.map(card => {
+            if (card.id === cardId) {
               return {
-                ...column,
-                cards: column.cards.filter(card => card.id !== cardId)
+                ...card,
+                srcImage: newImage
               }
             }
-            return column
+            return card
           })
         })),
-      addCardImage: (newImage, cardId, columnId) =>
+      editCardTitle: (newTitle, cardId) =>
         set(prev => ({
-          columns: prev.columns.map(column => {
-            if (column.id === columnId) {
+          cards: prev.cards.map(card => {
+            if (card.id === cardId) {
               return {
-                ...column,
-                cards: column.cards.map(card => {
-                  if (card.id === cardId) {
-                    return {
-                      ...card,
-                      srcImage: newImage
-                    }
-                  }
-                  return card
-                })
+                ...card,
+                title: newTitle
               }
             }
-            return column
+            return card
+        })
+        })),
+      editCardDescription: (newDescription, cardId) =>
+        set(prev => ({
+
+          cards: prev.cards.map(card => {
+            if (card.id === cardId) {
+              return {
+                ...card,
+                description: newDescription
+              }
+            }
+            return card
           })
         })),
-      editCardTitle: (newTitle, cardId, columnId) =>
+      editCardIsCover: (newState, cardId) =>
         set(prev => ({
-          columns: prev.columns.map(column => {
-            if (column.id === columnId) {
+          cards: prev.cards.map(card => {
+            if (card.id === cardId) {
               return {
-                ...column,
-                cards: column.cards.map(card => {
-                  if (card.id === cardId) {
-                    return {
-                      ...card,
-                      title: newTitle
-                    }
-                  }
-                  return card
-                })
+                ...card,
+                imageCovered: newState
               }
             }
-            return column
-          })
-        })),
-      editCardDescription: (newDescription, cardId, columnId) =>
-        set(prev => ({
-          columns: prev.columns.map(column => {
-            if (column.id === columnId) {
-              return {
-                ...column,
-                cards: column.cards.map(card => {
-                  if (card.id === cardId) {
-                    return {
-                      ...card,
-                      description: newDescription
-                    }
-                  }
-                  return card
-                })
-              }
-            }
-            return column
-          })
-        })),
-      editCardIsCover: (newState, cardId, columnId) =>
-        set(prev => ({
-          columns: prev.columns.map(column => {
-            if (column.id === columnId) {
-              return {
-                ...column,
-                cards: column.cards.map(card => {
-                  if (card.id === cardId) {
-                    return {
-                      ...card,
-                      imageCovered: newState
-                    }
-                  }
-                  return card
-                })
-              }
-            }
-            return column
+            return card
           })
         }))
     }),

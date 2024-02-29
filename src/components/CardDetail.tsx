@@ -5,7 +5,6 @@ import { useColumns } from './store/useColumns'
 type Props = {
   closeDetails: () => void
   card: Card
-  columnId: Id
 }
 
 export const CardDetail = (props: Props) => {
@@ -14,20 +13,20 @@ export const CardDetail = (props: Props) => {
     useColumns()
 
   const handleTitleChange = (newTitle: string) => {
-    editCardTitle(newTitle, id, props.columnId)
+    editCardTitle(newTitle, id,)
   }
 
   const handleDescriptionChange = (newDescription: string) => {
-    editCardDescription(newDescription, id, props.columnId)
+    editCardDescription(newDescription, id,)
   }
 
   const handleImgIsCover = (e: React.ChangeEvent<HTMLInputElement>) => {
-    editCardIsCover(e.target.checked, id, props.columnId)
+    editCardIsCover(e.target.checked, id,)
   }
 
   const deleteImage = () => {
     if (srcImage === '') return
-    addCardImage('', id, props.columnId)
+    addCardImage('', id,)
   }
 
   return (

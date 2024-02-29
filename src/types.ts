@@ -3,7 +3,6 @@ export type Id = string | number
 export type Column = {
   id: Id
   title: string
-  cards: Card[]
 }
 
 export type Card = {
@@ -12,6 +11,7 @@ export type Card = {
   description: string
   srcImage: string
   imageCovered: boolean
+  columnId: Id
 }
 
 export type ActiveCard = Card & { columnId: Id }

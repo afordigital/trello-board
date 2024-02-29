@@ -8,7 +8,6 @@ import { CardDetail } from './CardDetail'
 
 interface CardProps {
   card: Card
-  columnId: Id
 }
 
 export const CardContainer = (props: CardProps) => {
@@ -18,10 +17,10 @@ export const CardContainer = (props: CardProps) => {
   const { editCardTitle, addCardImage, deleteCard } = useColumns()
 
   const { isDragging, style, setNodeRef, attributes, listeners } =
-    useSortableConf({...props.card, columnId: props.columnId} as Card)
+    useSortableConf({...props.card} as Card)
 
   const handleTitleChange = (newTitle: string) => {
-    editCardTitle(newTitle, id, props.columnId)
+    editCardTitle(newTitle, id)
   }
 
   const closeDetails = () => {
@@ -36,14 +35,14 @@ export const CardContainer = (props: CardProps) => {
 
     if (srcImg) {
       if (!srcImg) return
-      addCardImage(srcImg as string, id, props.columnId)
+      addCardImage(srcImg as string, id)
     } else {
       alert('Image type is not valid')
     }
   }
 
   const handleDeleteCard = () => {
-    deleteCard(id, props.columnId)
+    deleteCard(id)
   }
 
   if (isDragging) {
@@ -62,7 +61,6 @@ export const CardContainer = (props: CardProps) => {
       {isOpened && (
           <CardDetail
             closeDetails={closeDetails}
-            columnId={props.columnId}
             card={props.card}
             />
       )}
