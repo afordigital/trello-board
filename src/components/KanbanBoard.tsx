@@ -87,7 +87,10 @@ export const KanbanBoard = () => {
 
         if (cards[activeIndex].columnId != cards[overIndex].columnId) {
           cards[activeIndex].columnId = cards[overIndex].columnId;
-          return arrayMove(cards, activeIndex, overIndex - 1);
+          console.log(
+            overIndex
+          )
+          return arrayMove(cards, activeIndex,  overIndex === 0 ? 0 : overIndex - 1);
         }
 
         return arrayMove(cards, activeIndex, overIndex);

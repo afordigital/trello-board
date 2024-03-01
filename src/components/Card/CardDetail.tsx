@@ -33,20 +33,21 @@ export const CardDetail = (props: Props) => {
   return (
     <div
       id='card-container'
-      className='fixed w-screen h-screen flex justify-center items-center inset-1/2 transform -translate-x-1/2 -translate-y-1/2'
+      className='fixed w-screen h-screen flex justify-center items-center inset-1/2 transform -translate-x-1/2 -translate-y-1/2 '
     >
       <div
-        className='absolute w-screen h-screen flex justify-center items-center left-0 top-0'
+        className='absolute w-screen h-screen flex justify-center items-center left-0 top-0 bg-[#00000080] cursor-pointer'
         onClick={() => {
           props.closeDetails()
         }}
+      
       />
       <div className='w-fit min-w-[500px] z-[999] flex flex-col gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md'>
         <X
           onClick={() => {
             props.closeDetails()
           }}
-          className='text-customWhite'
+          className='text-customWhite cursor-pointer'
         />
 
         <label className='w-full flex items-center'>
