@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Minus, GripVertical } from 'lucide-react'
-import { Card, Id } from '../../types'
+import { Card } from '../../types'
 import { useSortableConf } from '../../hooks/useSortableConf'
 import { CardDetail } from './CardDetail'
 import { useCard } from './hooks/useCard'

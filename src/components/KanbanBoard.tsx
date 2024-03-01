@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from 'react'
-import { ActiveCard, Column, Id } from '../types'
+import { ActiveCard, Column } from '../types'
 import { ColumnContainer } from './ColumnContainer'
 import { createColumn } from '../utils/createColumn'
 import {

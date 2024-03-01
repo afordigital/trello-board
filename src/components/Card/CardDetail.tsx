@@ -15,7 +15,7 @@ export const CardDetail = (props: Props) => {
   const [loadFileText, setLoadFileText] = useState(defaultText)
   const { handleTitleChange, handleDescriptionChange, handleImgIsCover, deleteImage, handleUploadImage } = useCard(props.card)
 
-  const stopDefaults = (e: any) => {
+  const stopDefaults = (e: React.DragEvent) => {
     e.stopPropagation();
     e.preventDefault();
   };
