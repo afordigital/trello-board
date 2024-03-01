@@ -15,7 +15,7 @@ type Props = {
 
 export const ColumnContainer = (props: Props) => {
   const { column } = props
-  const {  cards, setColumns, addCard, editColumnTitle } = useContext(KanbanContext)
+  const { cards, setColumns, addCard, editColumnTitle } = useContext(KanbanContext)
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const { isDragging, style, setNodeRef, attributes, listeners } =
@@ -43,7 +43,7 @@ export const ColumnContainer = (props: Props) => {
   }
 
   const handleConfirmationDelete = () => {
-    if (cards.length > 0) {
+    if (filteredCards.length > 0) {
       setShowDeleteConfirmation(true)
     } else {
       handleDeleteCard()
@@ -83,9 +83,9 @@ export const ColumnContainer = (props: Props) => {
           </div>
         </label>
         <div className='flex gap-x-2 items-center'>
-          {cards.length > 0 && (
+          {filteredCards.length > 0 && (
             <p className='bg-slate-7 w-[20px] h-[20px] text-sm text-center rounded-full'>
-              {cards.length}
+              {filteredCards.length}
             </p>
           )}
           <button
