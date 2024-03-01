@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { Minus, GripVertical } from 'lucide-react'
-import { Card, Id } from '../types'
-import { useColumns } from './store/useColumns'
-import { handleReaderResponse } from '../utils/handleReader'
-import { useSortableConf } from '../hooks/useSortableConf'
+import { Card, Id } from '../../types'
+import { handleReaderResponse } from '../../utils/handleReader'
+import { useSortableConf } from '../../hooks/useSortableConf'
 import { CardDetail } from './CardDetail'
+import { KanbanContext } from '../store/KanbanProvider'
 
 interface CardProps {
   card: Card
@@ -13,11 +13,13 @@ interface CardProps {
 export const CardContainer = (props: CardProps) => {
   const [isOpened, setIsOpened] = useState(false)
   const { id, title, srcImage, imageCovered } = props.card
-
-  const { editCardTitle, addCardImage, deleteCard } = useColumns()
+  const {  addCardImage,deleteCard, editCardTitle } = useContext(KanbanContext)
 
   const { isDragging, style, setNodeRef, attributes, listeners } =
-    useSortableConf({...props.card} as Card)
+    useSortableConf({
+      type: 'Card',
+      item: props.card
+    })
 
   const handleTitleChange = (newTitle: string) => {
     editCardTitle(newTitle, id)
@@ -50,8 +52,8 @@ export const CardContainer = (props: CardProps) => {
       <div
         ref={setNodeRef}
         style={style}
-        className='h-fit w-full opacity-50 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md'
-      ></div>
+        className={`h-18 w-full opacity-50 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md`}
+      />
     )
   }
 
@@ -71,32 +73,32 @@ export const CardContainer = (props: CardProps) => {
           if ((e.target as HTMLInputElement).id === 'input-name') return
           setIsOpened(true)
         }}
-        onDragOver={e => {
-          e.preventDefault()
-        }}
         onDrop={handleImageDropped}
-        className='h-fit w-full gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col text-white'
+        className={`h-18 w-full gap-y-4 p-x-2 overflow-y-auto bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col justify-center text-white cursor-pointer`}
       >
-        <label className='w-full flex items-center'>
+        <label className='w-full flex h-fit items-center gap-2'>
+        {imageCovered && srcImage && (
+            <img
+              src={srcImage ? srcImage : ''}
+              alt='Image Preview'
+              className='w-[50px] h-fit object-cover rounded-md'
+            />
+        )}
           <input
             value={title}
             id='input-name'
             onChange={e => handleTitleChange(e.target.value)}
-            className='bg-transparent rounded-[4px] mr-2 px-4 pt-2 flex-grow'
+            className='bg-transparent rounded-[4px] flex-grow'
           />
+          <span className='flex gap-2'>
           <Minus onClick={handleDeleteCard} className='cursor-pointer' />
-          <GripVertical {...attributes} {...listeners} />
+          <GripVertical  {...attributes} {...listeners} onClick={(e)=>{
+            e.stopPropagation()
+            e.preventDefault()
+          }} />
+          </span>
         </label>
-
-        {imageCovered && (
-          <div className='relative'>
-            <img
-              src={srcImage ? srcImage : ''}
-              alt='Image Preview'
-              style={{ display: srcImage ? 'block' : 'none' }}
-            />
-          </div>
-        )}
+      
       </div>
     </>
   )

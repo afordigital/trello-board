@@ -1,6 +1,7 @@
 import { X } from 'lucide-react'
-import { Card, Id } from '../types'
-import { useColumns } from './store/useColumns'
+import { Card, Id } from '../../types'
+import { useContext } from 'react'
+import { KanbanContext } from '../store/KanbanProvider'
 
 type Props = {
   closeDetails: () => void
@@ -9,8 +10,8 @@ type Props = {
 
 export const CardDetail = (props: Props) => {
   const { id, title, srcImage, description, imageCovered } = props.card
-  const { editCardTitle, editCardDescription, addCardImage, editCardIsCover } =
-    useColumns()
+  const {  addCardImage,editCardTitle, editCardDescription, editCardIsCover } = useContext(KanbanContext)
+
 
   const handleTitleChange = (newTitle: string) => {
     editCardTitle(newTitle, id,)
@@ -40,7 +41,7 @@ export const CardDetail = (props: Props) => {
           props.closeDetails()
         }}
       />
-      <div className='w-fit min-w-[500px] z-1 flex flex-col gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor'>
+      <div className='w-fit min-w-[500px] z-[999] flex flex-col gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md'>
         <X
           onClick={() => {
             props.closeDetails()
