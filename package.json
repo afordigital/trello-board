@@ -22,19 +22,23 @@
     "lucide-react": "^0.303.0",
     "nanoid": "^5.0.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "zustand": "^4.4.7"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.25",
     "@types/react-dom": "^18.2.10",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@unocss/preset-web-fonts": "^0.58.2",
     "@vitejs/plugin-react": "^4.0.3",
-    "eslint": "^8.45.0",
-    "eslint-plugin-react": "^7.32.2",
+    "eslint": "^8.57.0",
+    "eslint-config-standard-with-typescript": "^43.0.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
-    "typescript": "^5.3.2",
+    "typescript": "^5.3.3",
     "unocss": "^0.56.5",
     "vite": "^4.4.5",
     "vitest": "^1.1.0"

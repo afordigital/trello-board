@@ -1,14 +1,17 @@
 import { KanbanBoard } from './components/KanbanBoard'
 import { LayoutPanelTop } from 'lucide-react'
+import { KanbanProvider } from './components/store/KanbanProvider'
 
-function App () {
+function App() {
   return (
     <main className='w-full h-full min-h-screen font-onest flex flex-col items-center bg-[#050505] text-customWhite'>
       <h1 className='text-[#485E7A] py-10 text-2xl font-bold flex items-center justify-center'>
         <LayoutPanelTop className='mr-2' />
         Trello Board
       </h1>
-      <KanbanBoard />
+      <KanbanProvider>
+        <KanbanBoard />
+      </KanbanProvider>
     </main>
   )
 }

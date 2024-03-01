@@ -1,8 +1,7 @@
-import { useMemo, useState } from 'react'
-import { ActiveCard, Card, Column, Id } from '../types'
+import { useContext, useMemo, useState } from 'react'
+import { ActiveCard, Column } from '../types'
 import { ColumnContainer } from './ColumnContainer'
 import { createColumn } from '../utils/createColumn'
-import { filterColumn } from '../utils/filterColumn'
 import {
   DndContext,
   DragEndEvent,
@@ -16,28 +15,21 @@ import {
 import {
   SortableContext,
   arrayMove,
-  horizontalListSortingStrategy
 } from '@dnd-kit/sortable'
-import { useColumns } from './store/useColumns'
 import { createPortal } from 'react-dom'
 import { PlusCircle } from 'lucide-react'
-import { CardContainer } from './CardContainer'
+import { CardContainer } from './Card/CardContainer'
+import { KanbanContext } from './store/KanbanProvider'
 
 export const KanbanBoard = () => {
-  const { columns, setCards, setColumn, addColumn,deleteCard,addCard } = useColumns()
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
   const [activeCard, setActiveCard] = useState<ActiveCard | null>(null)
+  const { columns, setCards, setColumns, addColumn } = useContext(KanbanContext)
   const columnsId = useMemo(() => columns.map(col => col.id), [columns])
 
   const createNewColumn = () => {
     const columnToAdd = createColumn(columns.length + 1)
-    console.log(columnToAdd)
     addColumn(columnToAdd)
-  }
-
-  const deleteColumn = (id: Id) => {
-    const filteredColumn = filterColumn(columns, id)
-    setColumn(filteredColumn)
   }
 
   const onDragStart = (event: DragStartEvent) => {
@@ -52,34 +44,31 @@ export const KanbanBoard = () => {
   }
 
   const onDragEnd = (event: DragEndEvent) => {
-    setActiveCard(null)
-    setActiveColumn(null)
-    const { active, over } = event
+    setActiveColumn(null);
+    setActiveCard(null);
 
-    if (!over) return
+    const { active, over } = event;
+    if (!over) return;
 
-    const activeColumnId = active.id
-    const overColumnId = over.id
+    const activeId = active.id;
+    const overId = over.id;
 
-    if (activeColumnId === overColumnId) return
+    if (activeId === overId) return;
 
-    const activeColumnIndex = columns.findIndex(
-      (col: Column) => col.id === activeColumnId
-    )
+    const isActiveAColumn = active.data.current?.type === "Column";
+    if (!isActiveAColumn) return;
 
-    const overColumnIndex = columns.findIndex(
-      (col: Column) => col.id === overColumnId
-    )
+    setColumns((columns) => {
+      const activeColumnIndex = columns.findIndex((col) => col.id === activeId);
+      const overColumnIndex = columns.findIndex((col) => col.id === overId);
 
-    setColumn(arrayMove(columns, activeColumnIndex, overColumnIndex))
+      return arrayMove(columns, activeColumnIndex, overColumnIndex);
+    });
   }
 
   const onDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
-    const { current } = active.data;
-    const currentCard = current?.item as ActiveCard | undefined;
-
-    if (!over || !currentCard) return;
+    if (!over) return;
 
     const activeId = active.id;
     const overId = over.id;
@@ -88,28 +77,35 @@ export const KanbanBoard = () => {
 
     const isActiveATask = active.data.current?.type === "Card";
     const isOverATask = over.data.current?.type === "Card";
-    const currentOverCard = over.data.current?.item as ActiveCard | undefined;
 
     if (!isActiveATask) return;
 
-
     if (isActiveATask && isOverATask) {
-      const selectedColumn = columns.find((col) => col.id === currentCard.columnId);
-      if (!selectedColumn) return;
+      setCards((cards) => {
+        const activeIndex = cards.findIndex((t) => t.id === activeId);
+        const overIndex = cards.findIndex((t) => t.id === overId);
 
-      const tasks = selectedColumn.cards;
-      const activeIndex = tasks.findIndex((t) => t.id === activeId);
-      const overIndex = tasks.findIndex((t) => t.id === overId);
+        if (cards[activeIndex].columnId != cards[overIndex].columnId) {
+          cards[activeIndex].columnId = cards[overIndex].columnId;
+          console.log(
+            overIndex
+          )
+          return arrayMove(cards, activeIndex,  overIndex === 0 ? 0 : overIndex - 1);
+        }
 
-      const isOverACardInSameColumn = currentCard.columnId === currentOverCard?.columnId;
+        return arrayMove(cards, activeIndex, overIndex);
+      });
+    }
 
-      if (isOverACardInSameColumn) {
-        setCards(arrayMove(tasks, activeIndex, overIndex), selectedColumn.id)
-      }
-      else{
-        deleteCard(tasks[activeIndex].id,currentCard!.columnId);
-        addCard(tasks[activeIndex],currentOverCard!.columnId)
-      }
+    const isOverAColumn = over.data.current?.type === "Column";
+
+    if (isActiveATask && isOverAColumn) {
+      setCards((cards) => {
+        const activeIndex = cards.findIndex((t) => t.id === activeId);
+
+        cards[activeIndex].columnId = overId;
+        return arrayMove(cards, activeIndex, activeIndex);
+      });
     }
   }
 
@@ -133,14 +129,12 @@ export const KanbanBoard = () => {
         <div className='mx-auto flex'>
           <SortableContext
             items={columnsId}
-            strategy={horizontalListSortingStrategy}
           >
             <div className='flex gap-x-4 h-[300px] h-fit'>
               {columns.map(column => (
                 <ColumnContainer
                   key={column.id}
                   column={column}
-                  deleteColumn={deleteColumn}
                 />
               ))}
             </div>
@@ -158,11 +152,10 @@ export const KanbanBoard = () => {
             {activeColumn && (
               <ColumnContainer
                 column={activeColumn}
-                deleteColumn={deleteColumn}
               />
             )}
             {activeCard && (
-              <CardContainer card={activeCard} columnId={activeCard.columnId} />
+              <CardContainer card={activeCard} />
             )}
           </DragOverlay>,
           document.body

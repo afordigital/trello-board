@@ -1,7 +1,6 @@
 import { ComponentProps } from 'react'
 
 export const TextLikeInput = (props: ComponentProps<'input'>) => {
-  console.log(props.value)
   return (
     <div className='inline-grid'>
       <input

@@ -3,28 +3,27 @@ import { Card, Column } from '../types'
 import { CSS } from '@dnd-kit/utilities'
 
 type SortableItem = Column | Card;
+type SortableItemType = 'Column' | 'Card';
 
-const isColumn = (item: any): item is Column => {
-  return item.cards !== undefined;
+interface SortableConf {
+  type: SortableItemType;
+  item: SortableItem;
 }
 
-const getSortableItemType = (item: SortableItem) => {
-  return isColumn(item) ? 'Column' : 'Card';
-}
-
-export const useSortableConf = (sortableItem: SortableItem) => {
+export const useSortableConf = ({type, item}:SortableConf) => {
   const {
     setNodeRef,
     attributes,
     listeners,
     transform,
     transition,
-    isDragging
+    isDragging,
+    
   } = useSortable({
-    id: sortableItem?.id ?? '',
+    id: item.id,
     data: {
-      type: getSortableItemType(sortableItem),
-      item: sortableItem
+      type,
+      item: item
     }
   })
 
