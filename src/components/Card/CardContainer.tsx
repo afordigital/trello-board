@@ -1,50 +1,25 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { Minus, GripVertical } from 'lucide-react'
 import { Card, Id } from '../../types'
-import { handleReaderResponse } from '../../utils/handleReader'
 import { useSortableConf } from '../../hooks/useSortableConf'
 import { CardDetail } from './CardDetail'
-import { KanbanContext } from '../store/KanbanProvider'
-
+import { useCard } from './hooks/useCard'
 interface CardProps {
   card: Card
 }
 
 export const CardContainer = (props: CardProps) => {
   const [isOpened, setIsOpened] = useState(false)
-  const { id, title, srcImage, imageCovered } = props.card
-  const {  addCardImage,deleteCard, editCardTitle } = useContext(KanbanContext)
-
+  const { title, srcImage, imageCovered } = props.card
+  const {handleTitleChange, handleDeleteCard, handleUploadImage} = useCard(props.card)
   const { isDragging, style, setNodeRef, attributes, listeners } =
     useSortableConf({
       type: 'Card',
       item: props.card
     })
 
-  const handleTitleChange = (newTitle: string) => {
-    editCardTitle(newTitle, id)
-  }
-
   const closeDetails = () => {
     setIsOpened(false)
-  }
-
-  const handleImageDropped = async (e: React.DragEvent<HTMLElement>) => {
-    e.preventDefault()
-    const file = e?.dataTransfer?.files[0]
-
-    const srcImg = await handleReaderResponse(file)
-
-    if (srcImg) {
-      if (!srcImg) return
-      addCardImage(srcImg as string, id)
-    } else {
-      alert('Image type is not valid')
-    }
-  }
-
-  const handleDeleteCard = () => {
-    deleteCard(id)
   }
 
   if (isDragging) {
@@ -56,7 +31,6 @@ export const CardContainer = (props: CardProps) => {
       />
     )
   }
-
 
   return (
     <>
@@ -73,7 +47,11 @@ export const CardContainer = (props: CardProps) => {
           if ((e.target as HTMLInputElement).id === 'input-name') return
           setIsOpened(true)
         }}
-        onDrop={handleImageDropped}
+        onDrop={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          if (e.dataTransfer.files) handleUploadImage(e.dataTransfer.files)
+        }}
         className={`h-18 w-full gap-y-4 p-x-2 overflow-y-auto bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col justify-center text-white cursor-pointer`}
       >
         <label className='w-full flex h-fit items-center gap-2'>

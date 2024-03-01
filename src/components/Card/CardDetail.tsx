@@ -1,34 +1,24 @@
-import { X } from 'lucide-react'
-import { Card, Id } from '../../types'
-import { useContext } from 'react'
-import { KanbanContext } from '../store/KanbanProvider'
+import { Card } from '../../types'
+import { X, Image } from 'lucide-react'
+import { useCard } from './hooks/useCard'
+import { useState } from 'react'
 
 type Props = {
   closeDetails: () => void
   card: Card
 }
 
+const defaultText = 'Click or drag image here to upload'
+const defaultTextDrag = 'Drop image here'
 export const CardDetail = (props: Props) => {
-  const { id, title, srcImage, description, imageCovered } = props.card
-  const {  addCardImage,editCardTitle, editCardDescription, editCardIsCover } = useContext(KanbanContext)
+  const { title, srcImage, description, imageCovered } = props.card
+  const [loadFileText, setLoadFileText] = useState(defaultText)
+  const { handleTitleChange, handleDescriptionChange, handleImgIsCover, deleteImage, handleUploadImage } = useCard(props.card)
 
-
-  const handleTitleChange = (newTitle: string) => {
-    editCardTitle(newTitle, id,)
-  }
-
-  const handleDescriptionChange = (newDescription: string) => {
-    editCardDescription(newDescription, id,)
-  }
-
-  const handleImgIsCover = (e: React.ChangeEvent<HTMLInputElement>) => {
-    editCardIsCover(e.target.checked, id,)
-  }
-
-  const deleteImage = () => {
-    if (srcImage === '') return
-    addCardImage('', id,)
-  }
+  const stopDefaults = (e: any) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
 
   return (
     <div
@@ -40,7 +30,7 @@ export const CardDetail = (props: Props) => {
         onClick={() => {
           props.closeDetails()
         }}
-      
+
       />
       <div className='w-fit min-w-[500px] z-[999] flex flex-col gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md'>
         <X
@@ -58,7 +48,6 @@ export const CardDetail = (props: Props) => {
             className='bg-transparent rounded-[4px] mr-2 px-2 pt-2 flex-grow'
           />
         </label>
-
         <label>
           <textarea
             value={description}
@@ -66,34 +55,62 @@ export const CardDetail = (props: Props) => {
             className='bg-[#1E2733] p-4 rounded-[4px] text-customWhite h-[100px] w-full'
           />
         </label>
-
         <div>
-          <input
-            type='checkbox'
-            checked={imageCovered}
-            id='cover'
-            name='cover'
-            onChange={handleImgIsCover}
-          />
-          <label htmlFor='cover' className='ml-2'>
-            Put image as cover
-          </label>
-          {srcImage && (
+          {srcImage ? (
             <>
-              <button
-                onClick={() => {
-                  deleteImage()
-                }}
-                className='absolute top-0 left-0 right-0 z-20 bg-[#1E2733] rounded-[4px] py-2 hover:bg-slate-700'
-              >
-                Delete
-              </button>
-              <img
-                src={srcImage}
-                alt={`img-${title}`}
-                className='max-w-[200px] mt-4'
+              <div className='relative w-fit'>
+                <img
+                  src={srcImage}
+                  alt={`img-${title}`}
+                  className='max-w-[200px] mt-4 aspect-w-16 aspect-h-9 rounded-md object-cover'
+                />
+                <span className='flex text-xs items-center bg-red-5 w-fit p-1 rounded-md absolute top-[-10px] right-[-10px] cursor-pointer'
+                  onClick={deleteImage}
+                >
+                  <X size='16px' />
+                </span>
+              </div>
+              <input
+                type='checkbox'
+                checked={imageCovered}
+                id='cover'
+                name='cover'
+                onChange={handleImgIsCover}
               />
+              <label htmlFor='cover' className='ml-2 text-xs'>
+                Put image as cover
+              </label>
             </>
+          ) : (
+            <>
+              <label
+                htmlFor='file-upload'
+                onDragEnter={(e)=>{
+                  stopDefaults(e)
+                  setLoadFileText(defaultTextDrag)
+                }}
+                onDragOver={stopDefaults}
+                onDragLeave={(e)=>{
+                  stopDefaults(e)
+                  setLoadFileText(defaultText)
+                }}
+                onDrop={(e) => {
+                  stopDefaults(e)
+                  setLoadFileText(defaultText)
+                  if (e.dataTransfer.files) handleUploadImage(e.dataTransfer.files)
+                }}
+                className='flex items-center h-20 gap-2 p-4 rounded-md border-2 border-dashed border-columnBackgroundColor cursor-pointer'
+              >
+                <Image size='24px' />
+                <span className='pointer-events-none'>{loadFileText}</span>
+              </label>
+              <input type="file" accept='image/*' id="file-upload" style={{ display: 'none' }}
+                onChange={(e) => {
+                  if (e.target.files) handleUploadImage(e.target.files)
+                }} />
+            </>
+
+
           )}
         </div>
       </div>
