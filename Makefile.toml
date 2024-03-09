@@ -19,13 +19,20 @@ leptosfmt .
 cargo fmt --all
 cargo clippy --fix -- -D warnings
 '''
+[tasks.check-leptos]
+command = "leptosfmt"
+args = ["--check", "."]
+
+[tasks.check-fmt]
+command = "cargo"
+args = ["fmt", "--all", "--check"]
+
+[tasks.check-clippy]
+command = "cargo"
+args = ["clippy", "--", "-D", "warnings"]
 
 [tasks.check]
-script = '''
-leptosfmt --check .
-cargo fmt --all --check
-cargo clippy -- -D warnings
-'''
+dependencies = ["check-fmt", "check-leptos", "check-clippy"]
 
 [tasks.leptos-fmt]
 install_crate = "leptosfmt"
@@ -38,18 +45,9 @@ dependencies = ["cargo-format", "leptos-format"]
 [tasks.fmt]
 alias = "format"
 
-[tasks.prebuild]
-command = "npx"
-args = ["tailwindcss", "-i", "./input.css", "-o", "./style/output.css"]
-
 [tasks.build]
-dependencies = ["prebuild"]
-install_crate = { crate_name = "cargo-leptos", binary = "cargo", test_arg = [
-    "leptos",
-    "--version",
-], version = "0.2.12" }
 command = "cargo"
-args = ["leptos", "serve", "-r"]
+args = ["leptos", "build", "-r", "--features", "csr"]
 
 [tasks.serve]
 command = "cargo"
