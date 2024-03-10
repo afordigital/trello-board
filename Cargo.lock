@@ -691,6 +691,8 @@ dependencies = [
  "lazy_static",
  "leptos",
  "paste",
+ "serde",
+ "serde_json",
  "thiserror",
  "wasm-bindgen",
  "wasm-bindgen-futures",
@@ -1601,6 +1603,7 @@ dependencies = [
  "leptos",
  "leptos-use",
  "leptos_meta",
+ "serde",
  "unocss-classes",
  "wasm-bindgen",
 ]
