@@ -49,13 +49,13 @@ in
 {
   # `nix run`
   apps = rec {
-    zoomer = trelloPkg.app;
-    default = zoomer;
+    trelloBoard = trelloPkg.app;
+    default = trelloBoard;
   };
   # `nix build`
   packages = rec {
-    zoomer = trelloPkg.pkg;
-    default = zoomer;
+    trelloBoard = trelloPkg.pkg;
+    default = trelloBoard;
   };
   # `nix develop`
   devShells.default = cranixLib.devShell {
@@ -68,7 +68,6 @@ in
         trunk
         leptosfmt
         cargo-make
-        cargo-leptos
         binaryen
       ];
   };
