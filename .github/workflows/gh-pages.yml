@@ -18,7 +18,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@nightly-2024-03-08
+        with:
+          targets: wasm32-unknown-unknown
       - uses: Swatinem/rust-cache@v2
+      - name: Install trunk
+        run: |
+          cargo install trunk --locked --version 0.18.8
       - name: Install cargo-make
         run: |
           cargo install cargo-make --version 0.37.9

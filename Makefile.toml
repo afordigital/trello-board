@@ -46,9 +46,9 @@ dependencies = ["cargo-format", "leptos-format"]
 alias = "format"
 
 [tasks.build]
-command = "cargo"
-args = ["leptos", "build", "-r", "--features", "csr"]
+command = "trunk"
+args = ["build", "-r", "--no-default-features", "--features", "csr"]
 
 [tasks.serve]
-command = "cargo"
-args = ["leptos", "watch", "--features", "development", "--hot-reload"]
+command = "trunk"
+args = ["serve"]
