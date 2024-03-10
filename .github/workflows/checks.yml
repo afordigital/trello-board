@@ -42,7 +42,7 @@ jobs:
         run: leptosfmt --check .
 
   check-clippy:
-    needs: [fmt, leptosfmt]
+    needs: [check-fmt, check-leptos]
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -51,4 +51,4 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - name: cargo clippy
         run: |
-          clippy --features=csr -- -D warnings
+          clippy -- -D warnings
