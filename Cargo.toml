@@ -9,6 +9,7 @@ leptos = { version = "0.6", features = ["nightly", "csr"] }
 leptos_meta = { version = "0.6", features = ["nightly", "csr"] }
 wasm-bindgen = "=0.2.91"
 unocss-classes = { version = "2.0.0", features = ["runtime"] }
+leptos-use = "0.10.4"
 
 [features]
 development = []
