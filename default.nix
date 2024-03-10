@@ -61,9 +61,11 @@ in
   devShells.default = cranixLib.devShell {
     packages = with pkgs;
       [
+        nodejs
         toolchain
         pkg-config
         sass
+        trunk
         leptosfmt
         cargo-make
         cargo-leptos
