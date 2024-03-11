@@ -34,6 +34,7 @@ impl Card {
         Self {
             id,
             col_id,
+            title: "New Card".to_string(),
             ..Default::default()
         }
     }

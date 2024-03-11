@@ -3,7 +3,7 @@ use std::ops::Not;
 use leptos::*;
 use unocss_classes::uno;
 
-use crate::components::{DeleteConfirmation, GripVertical, Trash2};
+use crate::components::{DeleteConfirmation, GripVertical, Trash2, CardContainer};
 use crate::models::Column;
 use crate::store::KanbanState;
 
@@ -77,13 +77,13 @@ pub fn ColumnContainer(#[prop(into)] column: Column) -> impl IntoView {
               Add card
             </button>
             // <SortableContext items={filteredCards.map((el) => el.id)}>
-              // <div class=uno!["max-h-[500px] h-[500px] overflow-y-auto flex flex-col gap-3 px-1"]>
-              //   {filtered_cards.get().iter()
-              //     .map(|card| view!{
-              //       <CardContainer key={card.id} card={card} />
-              //     }).collect::<Vec<_>>()
-              //   }
-              // </div>
+              <div class=uno!["max-h-[500px] h-[500px] overflow-y-auto flex flex-col gap-3 px-1"]>
+                {filtered_cards.get().iter()
+                  .map(|card| view!{
+                    <CardContainer card=card.clone() />
+                  }).collect::<Vec<_>>()
+                }
+              </div>
             // </SortableContext>
           </div>
           {move || show_delete_confirmation.get().then_some(
