@@ -2,7 +2,8 @@ use leptos::*;
 use leptos_meta::*;
 use unocss_classes::uno;
 
-use crate::components::LayoutPanelTop;
+use crate::components::{KanbanBoard, LayoutPanelTop};
+use crate::store::KanbanProvider;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -16,6 +17,9 @@ pub fn App() -> impl IntoView {
                 <LayoutPanelTop class="mr-2" />
                 Trello Board
             </h1>
+            <KanbanProvider>
+                <KanbanBoard />
+            </KanbanProvider>
         </main>
     }
 }
