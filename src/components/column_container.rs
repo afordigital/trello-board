@@ -1,3 +1,5 @@
+use std::ops::Not;
+
 use leptos::*;
 use unocss_classes::uno;
 
@@ -26,8 +28,9 @@ pub fn ColumnContainer(#[prop(into)] column: Column) -> impl IntoView {
 
     let confirmation_delete = move || {
         if !filtered_cards.get().is_empty() {
-            set_show_delete_confirmation.set(true)
+            set_show_delete_confirmation.set(true);
         } else {
+            set_show_delete_confirmation.set(false);
             set_kanban.update(|s| s.delete_column(column.id));
         }
     };
@@ -50,7 +53,7 @@ pub fn ColumnContainer(#[prop(into)] column: Column) -> impl IntoView {
               </div>
             </label>
             <div class=uno!["flex gap-x-2 items-center"]>
-              {move || filtered_cards.get().is_empty().then_some(view!{
+              {move || filtered_cards.get().is_empty().not().then_some(view!{
                   <p class=uno!["bg-slate-7 w-[20px] h-[20px] text-sm text-center rounded-full"]>
                   {filtered_cards.get().len()}
                   </p>
@@ -75,18 +78,18 @@ pub fn ColumnContainer(#[prop(into)] column: Column) -> impl IntoView {
             </button>
             // <SortableContext items={filteredCards.map((el) => el.id)}>
               // <div class=uno!["max-h-[500px] h-[500px] overflow-y-auto flex flex-col gap-3 px-1"]>
-              //   {filteredCards
-              //     .map(card => (
+              //   {filtered_cards.get().iter()
+              //     .map(|card| view!{
               //       <CardContainer key={card.id} card={card} />
-              //     ))
+              //     }).collect::<Vec<_>>()
               //   }
               // </div>
             // </SortableContext>
           </div>
-          {show_delete_confirmation.get().then_some(
+          {move || show_delete_confirmation.get().then_some(
             view!{
               <DeleteConfirmation
-                on_succes=confirmation_delete
+                on_succes=move || set_kanban.update(|s| s.delete_column(column.id))
                 on_cancel=move || set_show_delete_confirmation.set(false)
                 title=format!("Delete column \"{}\"", column.title)
                 message="This column has at least one card, are you sure to delete it?".to_string()

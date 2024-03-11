@@ -30,7 +30,9 @@ impl KanbanState {
     }
     pub fn delete_column(&mut self, id: Id) {
         if let Some(i) = self.columns.iter().position(|col| col.id == id) {
-            self.col_index -= 1;
+            while let Some(i) = self.cards().position(|card| card.col_id == id) {
+                self.cards.remove(i);
+            }
             self.columns.remove(i);
         }
     }
@@ -40,8 +42,7 @@ impl KanbanState {
     }
     pub fn delete_card(&mut self, id: Id) {
         if let Some(i) = self.cards.iter().position(|col| col.id == id) {
-            self.card_index -= 1;
-            self.columns.remove(i);
+            self.cards.remove(i);
         }
     }
     pub fn card_image(&mut self, id: Id, image: String) {
