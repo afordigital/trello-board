@@ -46,7 +46,7 @@ alias = "format"
 
 [tasks.build]
 command = "trunk"
-args = ["build", "-r", "--no-default-features", "--features", "csr"]
+args = ["build", "--no-default-features"]
 
 [tasks.serve]
 command = "trunk"
