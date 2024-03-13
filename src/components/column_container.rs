@@ -3,8 +3,8 @@ use std::ops::Not;
 use leptos::*;
 use unocss_classes::uno;
 
-use crate::components::{DeleteConfirmation, GripVertical, Trash2, CardContainer};
-use crate::models::Column;
+use crate::components::{CardContainer, CardDetails, DeleteConfirmation, GripVertical, Trash2};
+use crate::models::{Card, Column};
 use crate::store::KanbanState;
 
 #[component]
@@ -12,6 +12,7 @@ pub fn ColumnContainer(#[prop(into)] column: Column) -> impl IntoView {
     let kanban_state = expect_context::<Signal<KanbanState>>();
     let set_kanban = expect_context::<WriteSignal<KanbanState>>();
     let (show_delete_confirmation, set_show_delete_confirmation) = create_signal(false);
+    let (card_selected, set_card_selected) = create_signal::<Option<Card>>(None);
 
     let filtered_cards = {
         let kanban_state = kanban_state.clone();
@@ -35,7 +36,22 @@ pub fn ColumnContainer(#[prop(into)] column: Column) -> impl IntoView {
         }
     };
 
+    let handle_title_change = {
+        let set_kanban = set_kanban.clone();
+        let col_id = column.id;
+        move |value: String| {
+            set_kanban.update(|s| s.column_title(col_id, value));
+        }
+    };
+
     view! {
+        <>
+      {move || card_selected().map(|card| view! {
+          <CardDetails
+            close_details=move || set_card_selected(None)
+            card=card.clone()
+            />
+      })}
         <div
           // ref={setNodeRef}
           // style={style}
@@ -47,15 +63,15 @@ pub fn ColumnContainer(#[prop(into)] column: Column) -> impl IntoView {
                 <input
                   type_="text"
                   value={column.title.clone()}
-                  // onChange={e => onInputChange(e.target.value)}
+                  on:change=move |e| handle_title_change(event_target_value(&e))
                   class=uno!["bg-transparent"]
                 />
               </div>
             </label>
             <div class=uno!["flex gap-x-2 items-center"]>
-              {move || filtered_cards.get().is_empty().not().then_some(view!{
+              {move || filtered_cards().is_empty().not().then_some(view!{
                   <p class=uno!["bg-slate-7 w-[20px] h-[20px] text-sm text-center rounded-full"]>
-                  {filtered_cards.get().len()}
+                  {filtered_cards().len()}
                   </p>
                 })
               }
@@ -78,9 +94,14 @@ pub fn ColumnContainer(#[prop(into)] column: Column) -> impl IntoView {
             </button>
             // <SortableContext items={filteredCards.map((el) => el.id)}>
               <div class=uno!["max-h-[500px] h-[500px] overflow-y-auto flex flex-col gap-3 px-1"]>
-                {filtered_cards.get().iter()
+                {move || filtered_cards().iter()
                   .map(|card| view!{
-                    <CardContainer card=card.clone() />
+                    <CardContainer
+                        card=card.clone()
+                        on_select=move |c| {
+                            set_card_selected(Some(c));
+                        }
+                        />
                   }).collect::<Vec<_>>()
                 }
               </div>
@@ -96,5 +117,6 @@ pub fn ColumnContainer(#[prop(into)] column: Column) -> impl IntoView {
               />
             })}
         </div>
+            </>
     }
 }

@@ -21,7 +21,8 @@ pub struct KanbanState {
 impl KanbanState {
     pub fn add_column(&mut self) {
         self.col_index += 1;
-        self.columns.push(Column::new(self.col_index));
+        let n = self.columns.len();
+        self.columns.push(Column::new(n, self.col_index));
     }
     pub fn column_title(&mut self, col_id: Id, title: String) {
         if let Some(col) = self.columns.iter_mut().find(|col| col.id == col_id) {

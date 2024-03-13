@@ -21,10 +21,10 @@ pub struct Card {
 }
 
 impl Column {
-    pub fn new(id: Id) -> Self {
+    pub fn new(n: usize, id: Id) -> Self {
         Self {
             id,
-            title: format!("Column {id}"),
+            title: format!("Column {n}"),
         }
     }
 }

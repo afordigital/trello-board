@@ -11,36 +11,32 @@ pub fn DeleteConfirmation<F, F1>(
     on_succes: F1,
 ) -> impl IntoView
 where
-    F: Fn() + Clone + 'static,
+    F: Fn() + Copy + 'static,
     F1: Fn() + 'static,
 {
-    let cancel = {
-        let on_cancel = on_cancel.clone();
-        move |_| {
-            on_cancel();
-        }
-    };
+    let target = create_node_ref::<Div>();
+    on_click_outside(target, move |_| { on_cancel(); });
+
     let success = move |_| {
         on_succes();
     };
 
     view! {
         <div
-          on:click=move |_| on_cancel()
           class=uno![
             "fixed w-screen h-screen flex justify-center items-center inset-1/2 transform -translate-x-1/2 -translate-y-1/2",
             "bg-[rgba(255, 255, 255, 0.26)] backdrop-blur-[11.2px]"
           ]
         >
           <div class=uno!["absolute w-screen h-screen flex justify-center items-center left-0 top-0"]>
-            <div class=uno!["w-fit min-w-[500px] z-1 flex flex-col gap-y-4 p-4 py-8 rounded bg-mainBackgroundColor border-2 border-columnBackgroundColor"]>
+            <div node_ref=target class=uno!["w-fit min-w-[500px] z-1 flex flex-col gap-y-4 p-4 py-8 rounded bg-mainBackgroundColor border-2 border-columnBackgroundColor"]>
               <div class=uno!["mb-2"]>
                 <h2 class=uno!["text-red-500 bold text-xl mb-2"]>{title}</h2>
                 <p>{message}</p>
               </div>
               <footer class=uno!["flex gap-x-4 justify-end"]>
                 <button class=uno!["bg-red-8 rounded-[4px] h-fit p-2"] on:click=success>yes, delete</button>
-                <button class=uno!["bg-slate-7 rounded-[4px] h-fit p-2"] on:click=cancel>no, Cancel</button>
+                <button class=uno!["bg-slate-7 rounded-[4px] h-fit p-2"] on:click=move |_| on_cancel()>no, Cancel</button>
               </footer>
             </div>
           </div>

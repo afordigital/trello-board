@@ -1,31 +1,29 @@
 use leptos::html::Div;
 use leptos::*;
-use leptos_use::{use_drop_zone_with_options, UseDropZoneOptions, UseDropZoneReturn};
+use leptos_use::utils::Pausable;
+use leptos_use::{
+    use_drop_zone_with_options, use_interval_fn, UseDropZoneOptions, UseDropZoneReturn,
+};
 use unocss_classes::uno;
-use web_sys::InputEvent;
+use web_sys::MouseEvent;
 
-use crate::components::{GripVertical, Minus};
+use crate::components::{CardDetails, GripVertical, Minus};
 use crate::models::Card;
 use crate::store::KanbanState;
 
 #[component]
-pub fn CardContainer(card: Card) -> impl IntoView {
+pub fn CardContainer<F>(card: Card, on_select: F) -> impl IntoView
+where
+    F: Fn(Card) + Copy + 'static,
+{
     let Card {
         id,
-        col_id,
         title,
-        description,
         src_img,
         img_covered,
-    } = card;
-    let drop_zone_el = create_node_ref::<Div>();
+        ..
+    } = card.clone();
     let set_kanban = expect_context::<WriteSignal<KanbanState>>();
-
-    let on_drop = |event| {};
-
-    let UseDropZoneReturn {
-        is_over_drop_zone, ..
-    } = use_drop_zone_with_options(drop_zone_el, UseDropZoneOptions::default().on_drop(on_drop));
 
     let delete_card = {
         let set_kanban = set_kanban.clone();
@@ -41,15 +39,10 @@ pub fn CardContainer(card: Card) -> impl IntoView {
 
     view! {
     <>
-      // {isOpened && (
-      //     <CardDetail
-      //       closeDetails={closeDetails}
-      //       card={props.card}
-      //       />
-      // )}
       <div
         // ref_node={setNodeRef}
         // style={style}
+        on:click=move |_| on_select(card.clone())
         //onClick={(e: React.MouseEvent<HTMLInputElement>) => {
         //  if ((e.target as HTMLInputElement).id === "input-name") return
         //  setIsOpened(true)
@@ -62,15 +55,19 @@ pub fn CardContainer(card: Card) -> impl IntoView {
         class=uno!["h-18 w-full gap-y-4 p-x-2 overflow-y-auto bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col justify-center text-white cursor-pointer"]
       >
         <label class=uno!["w-full flex h-fit items-center gap-2"]>
-          {(img_covered && !src_img.is_empty()).then_some(view! {
+          {move || (img_covered && !src_img.is_empty()).then_some(view! {
             <img
-              src=src_img
+              src=src_img.clone()
               alt="Image Preview"
               class=uno!["w-[50px] h-fit object-cover rounded-md"]
             />
           })}
           <input
             value={title}
+            on:click:undelegated= move |e| {
+                e.prevent_default();
+                e.stop_propagation();
+            }
             on:change=move |e| handle_title_change(event_target_value(&e))
             class=uno!["bg-transparent rounded-[4px] flex-grow"]
           />
