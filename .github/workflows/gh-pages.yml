@@ -28,6 +28,12 @@ jobs:
       - name: Install cargo-make
         run: |
           cargo install cargo-make --version 0.37.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install NodeJs deps
+        run: npm install --production
       - name: build
         run: |
           cargo make build
