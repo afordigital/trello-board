@@ -1,8 +1,7 @@
 use leptos::html::{Div, Input, Label};
 use leptos::*;
 use leptos_use::{
-    on_click_outside, use_drop_zone_with_options, UseDropZoneEvent, UseDropZoneOptions,
-    UseDropZoneReturn,
+    on_click_outside, use_drop_zone_with_options, UseDropZoneOptions, UseDropZoneReturn,
 };
 use unocss_classes::uno;
 use wasm_bindgen::prelude::Closure;
@@ -41,7 +40,6 @@ where
     let (covered_img, set_covered_img) = create_signal(img_covered);
 
     let handle_upload_file = {
-        let set_kanban = set_kanban.clone();
         move |file: web_sys::File| {
             set_load_file_text.set(DEFAULT_TEXT);
             if file.size() > 1000000. {
@@ -73,14 +71,8 @@ where
     let UseDropZoneReturn { .. } = use_drop_zone_with_options(
         drop_zone_el,
         UseDropZoneOptions::default()
-            .on_enter({
-                let set_kanban = set_kanban.clone();
-                move |_| set_load_file_text.set(DEFAULT_TEXT_DRAG)
-            })
-            .on_leave({
-                let set_kanban = set_kanban.clone();
-                move |_| set_load_file_text.set(DEFAULT_TEXT)
-            })
+            .on_enter(move |_| set_load_file_text.set(DEFAULT_TEXT_DRAG))
+            .on_leave(move |_| set_load_file_text.set(DEFAULT_TEXT))
             .on_drop(move |e| {
                 if let Some(file) = e.files.first() {
                     handle_upload_file(file.clone());
@@ -100,7 +92,7 @@ where
             close_details()
         }
     };
-    on_click_outside(target, move |_| {
+    let _ = on_click_outside(target, move |_| {
         handle_close();
     });
 

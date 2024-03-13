@@ -15,7 +15,7 @@ where
     F1: Fn() + 'static,
 {
     let target = create_node_ref::<Div>();
-    on_click_outside(target, move |_| {
+    let _ = on_click_outside(target, move |_| {
         on_cancel();
     });
 

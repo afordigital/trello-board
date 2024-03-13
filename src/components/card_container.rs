@@ -1,13 +1,7 @@
-use leptos::html::Div;
 use leptos::*;
-use leptos_use::utils::Pausable;
-use leptos_use::{
-    use_drop_zone_with_options, use_interval_fn, UseDropZoneOptions, UseDropZoneReturn,
-};
 use unocss_classes::uno;
-use web_sys::MouseEvent;
 
-use crate::components::{CardDetails, GripVertical, Minus};
+use crate::components::{GripVertical, Minus};
 use crate::models::Card;
 use crate::store::KanbanState;
 
@@ -40,18 +34,7 @@ where
     view! {
         <>
             <div
-                // ref_node={setNodeRef}
-                // style={style}
                 on:click=move |_| on_select(card.clone())
-                // onClick={(e: React.MouseEvent<HTMLInputElement>) => {
-                // if ((e.target as HTMLInputElement).id === "input-name") return
-                // setIsOpened(true)
-                // }}
-                // onDrop={(e) => {
-                // e.preventDefault()
-                // e.stopPropagation()
-                // if (e.dataTransfer.files) handleUploadImage(e.dataTransfer.files)
-                // }}
                 class=uno![
                     "h-18 w-full gap-y-4 p-x-2 overflow-y-auto bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col justify-center text-white cursor-pointer"
                 ]

@@ -1,9 +1,4 @@
-use std::collections::HashMap;
-
-use leptos::{
-    component, provide_context, run_as_child, Children, IntoView, Signal, SignalGet, SignalUpdate,
-    WriteSignal,
-};
+use leptos::{component, provide_context, run_as_child, Children, IntoView};
 use leptos_use::storage::{use_local_storage_with_options, UseStorageOptions};
 use leptos_use::utils::JsonCodec;
 use serde::{Deserialize, Serialize};
