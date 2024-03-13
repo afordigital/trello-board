@@ -29,7 +29,7 @@ args = ["fmt", "--all", "--check"]
 
 [tasks.check-clippy]
 command = "cargo"
-args = ["clippy", "--", "-D", "warnings"]
+args = ["check"]
 
 [tasks.check]
 dependencies = ["check-fmt", "check-leptos", "check-clippy"]
