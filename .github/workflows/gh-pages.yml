@@ -33,7 +33,7 @@ jobs:
           node-version: 20
           cache: 'npm'
       - name: Install NodeJs deps
-        run: npm install --production
+        run: npm install --production && npm i -g @unocss/cli
       - name: build
         run: |
           cargo make build
