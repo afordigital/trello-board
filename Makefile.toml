@@ -35,12 +35,11 @@ args = ["clippy", "--", "-D", "warnings"]
 dependencies = ["check-fmt", "check-leptos", "check-clippy"]
 
 [tasks.leptos-fmt]
-install_crate = "leptosfmt"
 command = "leptosfmt"
 args = ["."]
 
 [tasks.format]
-dependencies = ["cargo-format", "leptos-format"]
+dependencies = ["cargo-fmt", "leptos-fmt"]
 
 [tasks.fmt]
 alias = "format"
