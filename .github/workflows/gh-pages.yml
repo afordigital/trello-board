@@ -28,6 +28,11 @@ jobs:
       - name: Install cargo-make
         run: |
           cargo install cargo-make --version 0.37.9
-      - name: checks
+      - name: build
         run: |
           cargo make build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
