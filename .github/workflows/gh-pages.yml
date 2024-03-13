@@ -17,8 +17,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@nightly-2024-03-08
+      - uses: dtolnay/rust-toolchain@nightly
         with:
+          toolchain: nightly-2024-03-08
           targets: wasm32-unknown-unknown
       - uses: Swatinem/rust-cache@v2
       - name: Install trunk
