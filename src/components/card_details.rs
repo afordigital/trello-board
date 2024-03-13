@@ -9,7 +9,7 @@ use wasm_bindgen::prelude::Closure;
 use wasm_bindgen::JsCast;
 use web_sys::FileReader;
 
-use crate::components::X;
+use crate::components::{X, Image};
 use crate::models::Card;
 use crate::store::KanbanState;
 
@@ -165,7 +165,7 @@ where
                 node_ref=drop_zone_el
                 class=uno!["flex items-center h-20 gap-2 p-4 rounded-md border-2 border-dashed border-columnBackgroundColor cursor-pointer"]
               >
-                // <Image />
+                <Image />
                 <span class=uno!["pointer-events-none"]>{load_file_text}</span>
               </label>
               <input
