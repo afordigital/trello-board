@@ -61,7 +61,7 @@ pub fn ColumnContainer(#[prop(into)] column: Column) -> impl IntoView {
             <label class=uno!["flex items-center"]>
               <div class=uno!["flex-1"]>
                 <input
-                  type_="text"
+                  type="text"
                   value={column.title.clone()}
                   on:change=move |e| handle_title_change(event_target_value(&e))
                   class=uno!["bg-transparent"]

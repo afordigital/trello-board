@@ -1,7 +1,12 @@
-use leptos::html::{Label, Div};
+use leptos::html::{Div, Input, Label};
 use leptos::*;
-use leptos_use::{use_drop_zone_with_options, UseDropZoneOptions, UseDropZoneReturn, UseDropZoneEvent, on_click_outside};
+use leptos_use::{
+    on_click_outside, use_drop_zone_with_options, UseDropZoneEvent, UseDropZoneOptions,
+    UseDropZoneReturn,
+};
 use unocss_classes::uno;
+use wasm_bindgen::prelude::Closure;
+use wasm_bindgen::JsCast;
 use web_sys::FileReader;
 
 use crate::components::X;
@@ -26,34 +31,40 @@ where
     } = card;
 
     let drop_zone_el = create_node_ref::<Label>();
+    let input_file_ref = create_node_ref::<Input>();
     let target = create_node_ref::<Div>();
     let set_kanban = expect_context::<WriteSignal<KanbanState>>();
     let (load_file_text, set_load_file_text) = create_signal(DEFAULT_TEXT);
     let (title, set_title) = create_signal(title);
     let (description, set_description) = create_signal(description);
-    let (src_img, set_src_img) = create_signal(src_img);
+    let (src_img, set_src_img) = create_signal(src_img.clone());
     let (covered_img, set_covered_img) = create_signal(img_covered);
 
     let handle_upload_file = {
         let set_kanban = set_kanban.clone();
-        move |e: UseDropZoneEvent| {
+        move |file: web_sys::File| {
             set_load_file_text.set(DEFAULT_TEXT);
-            if let Some(file) = e.files.first() {
-                if file.size() > 1000000. {
-                    // alert("Image size is too big");
-                    return;
+            if file.size() > 1000000. {
+                if let Some(win) = web_sys::window() {
+                    win.alert_with_message("Image size is too big")
+                        .expect("Cannot show alert");
                 }
-                if let Ok(reader) = FileReader::new() {
-                    reader.read_as_data_url(&file).unwrap();
-                }
-                // const srcImg = await handleReaderResponse(file)
-
-                // if (srcImg) {
-                //   if (!srcImg) return
-                //   addCardImage(srcImg as string,card.id)
-                // } else {
-                //   alert('Image type is not valid')
-                // }
+                return;
+            }
+            if let Ok(reader) = FileReader::new() {
+                let onload = {
+                    let reader = reader.clone();
+                    let set_src_img = set_src_img.clone();
+                    Closure::wrap(Box::new(move || {
+                        let res = reader.result().expect("Cannot get result from FileReader");
+                        let res = res.as_string().unwrap();
+                        set_src_img(res.clone());
+                        log::debug!("Image Source setter: {res}");
+                    }) as Box<dyn FnMut()>)
+                };
+                reader.set_onload(Some(onload.as_ref().unchecked_ref()));
+                reader.read_as_data_url(&file).unwrap();
+                onload.forget();
             }
         }
     };
@@ -70,7 +81,11 @@ where
                 let set_kanban = set_kanban.clone();
                 move |_| set_load_file_text.set(DEFAULT_TEXT)
             })
-            .on_drop(handle_upload_file),
+            .on_drop(move |e| {
+                if let Some(file) = e.files.first() {
+                    handle_upload_file(file.clone());
+                }
+            }),
     );
 
     let handle_close = {
@@ -85,7 +100,9 @@ where
             close_details()
         }
     };
-    on_click_outside(target, move |_| { handle_close(); });
+    on_click_outside(target, move |_| {
+        handle_close();
+    });
 
     view! {
     <div
@@ -117,7 +134,7 @@ where
           />
         </label>
         <div>
-          {if !src_img().is_empty() {
+          {move || if !src_img().is_empty() {
             view! {
               <div class=uno!["relative w-fit"]>
                 <img
@@ -126,35 +143,50 @@ where
                   class=uno!["max-w-[200px] mt-4 aspect-w-16 aspect-h-9 rounded-md object-cover"]
                 />
                 <span class=uno!["flex text-xs items-center bg-red-5 w-fit p-1 rounded-md absolute top-[-10px] right-[-10px] cursor-pointer"]
-                  on:click=move |_| set_src_img(String::new())
+                  on:click=move |_| set_src_img.set(String::new())
                 >
                   <X size=16 />
                 </span>
               </div>
               <input
-                type_="checkbox"
+                type="checkbox"
+                id="cover"
                 checked=img_covered
                 on:change=move |e| set_covered_img(event_target_checked(&e))
               />
-              <label htmlFor="cover" class=uno!["ml-2 text-xs"]>
+              <label for="cover" class=uno!["ml-2 text-xs"]>
                 Put image as cover
               </label>
             }
           } else {
             view!{
               <label
-                html_for="file-upload"
+                for="file-upload"
                 node_ref=drop_zone_el
                 class=uno!["flex items-center h-20 gap-2 p-4 rounded-md border-2 border-dashed border-columnBackgroundColor cursor-pointer"]
               >
                 // <Image />
                 <span class=uno!["pointer-events-none"]>{load_file_text}</span>
               </label>
-              <input type_="file" accept="image/*" id="file-upload"
+              <input
+                node_ref=input_file_ref
+                type="file"
+                id="file-upload"
+                prop:accept="image/*"
                 class=uno!["hidden"]
-                // onChange={(e) => {
-                //   if (e.target.files) handleUploadImage(e.target.files)
-                // }}
+                on:change=move |_| {
+                    if let Some(files) = input_file_ref.get() {
+                        if let Some(files) = files.files() {
+                            if files.length() > 0 {
+                                handle_upload_file(files.get(0).unwrap());
+                            } else {
+                                log::warn!("Files selected is empty");
+                            }
+                        } else {
+                            log::warn!("Cannot get files");
+                        }
+                    } 
+                }
                 />
             }
           }}
