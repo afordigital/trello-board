@@ -1,9 +1,7 @@
 use leptos::{component, view, IntoView};
 
 #[component]
-pub fn Minus(
-    #[prop(default = 24)] size: u32,
-    ) -> impl IntoView {
+pub fn Minus(#[prop(default = 24)] size: u32) -> impl IntoView {
     view! {
         <svg
             width=size
@@ -14,8 +12,9 @@ pub fn Minus(
             stroke="currentColor"
             stroke-width="2"
             stroke-linecap="round"
-            stroke-linejoin="round">
-            <path d="M5 12h14"/>
+            stroke-linejoin="round"
+        >
+            <path d="M5 12h14"></path>
         </svg>
     }
 }

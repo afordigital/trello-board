@@ -9,7 +9,7 @@ use wasm_bindgen::prelude::Closure;
 use wasm_bindgen::JsCast;
 use web_sys::FileReader;
 
-use crate::components::{X, Image};
+use crate::components::{Image, X};
 use crate::models::Card;
 use crate::store::KanbanState;
 
@@ -105,93 +105,114 @@ where
     });
 
     view! {
-    <div
-      class=uno!["fixed w-screen h-screen flex justify-center items-center inset-1/2 transform -translate-x-1/2 -translate-y-1/2 "]
-    >
-      <div
-        class=uno![
-            "absolute w-screen h-screen flex justify-center items-center left-0 top-0 bg-[#00000080] cursor-pointer",
-            "bg-[rgba(255, 255, 255, 0.26)] backdrop-blur-[11.2px]"
-        ]
-      />
-      <div node_ref=target class=uno!["w-fit min-w-[500px] z-[999] flex flex-col gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md"]>
-        <div style="width: fit-content" on:click=move |_| handle_close()>
-            <X class=uno!["text-customWhite cursor-pointer"] />
-        </div>
+        <div class=uno![
+            "fixed w-screen h-screen flex justify-center items-center inset-1/2 transform -translate-x-1/2 -translate-y-1/2 "
+        ]>
+            <div class=uno![
+                "absolute w-screen h-screen flex justify-center items-center left-0 top-0 bg-[#00000080] cursor-pointer",
+                "bg-[rgba(255, 255, 255, 0.26)] backdrop-blur-[11.2px]"
+            ]></div>
 
-        <label class=uno!["w-full flex items-center"]>
-          <input
-            prop:value=title.clone()
-            on:change=move |e| set_title(event_target_value(&e))
-            class=uno!["bg-transparent rounded-[4px] mr-2 px-2 pt-2 flex-grow"]
-          />
-        </label>
-        <label>
-          <textarea
-            prop:value=description()
-            on:change=move |e| set_description(event_target_value(&e))
-            class=uno!["bg-[#1E2733] p-4 rounded-[4px] text-customWhite h-[100px] w-full"]
-          />
-        </label>
-        <div>
-          {move || if !src_img().is_empty() {
-            view! {
-              <div class=uno!["relative w-fit"]>
-                <img
-                  src=src_img
-                  alt=format!("img-{}", title())
-                  class=uno!["max-w-[200px] mt-4 aspect-w-16 aspect-h-9 rounded-md object-cover"]
-                />
-                <span class=uno!["flex text-xs items-center bg-red-5 w-fit p-1 rounded-md absolute top-[-10px] right-[-10px] cursor-pointer"]
-                  on:click=move |_| set_src_img.set(String::new())
-                >
-                  <X size=16 />
-                </span>
-              </div>
-              <input
-                type="checkbox"
-                id="cover"
-                checked=img_covered
-                on:change=move |e| set_covered_img(event_target_checked(&e))
-              />
-              <label for="cover" class=uno!["ml-2 text-xs"]>
-                Put image as cover
-              </label>
-            }
-          } else {
-            view!{
-              <label
-                for="file-upload"
-                node_ref=drop_zone_el
-                class=uno!["flex items-center h-20 gap-2 p-4 rounded-md border-2 border-dashed border-columnBackgroundColor cursor-pointer"]
-              >
-                <Image />
-                <span class=uno!["pointer-events-none"]>{load_file_text}</span>
-              </label>
-              <input
-                node_ref=input_file_ref
-                type="file"
-                id="file-upload"
-                prop:accept="image/*"
-                class=uno!["hidden"]
-                on:change=move |_| {
-                    if let Some(files) = input_file_ref.get() {
-                        if let Some(files) = files.files() {
-                            if files.length() > 0 {
-                                handle_upload_file(files.get(0).unwrap());
-                            } else {
-                                log::warn!("Files selected is empty");
+            <div
+                node_ref=target
+                class=uno![
+                    "w-fit min-w-[500px] z-[999] flex flex-col gap-y-4 p-4 bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md"
+                ]
+            >
+
+                <div style="width: fit-content" on:click=move |_| handle_close()>
+                    <X class=uno!["text-customWhite cursor-pointer"]/>
+                </div>
+
+                <label class=uno!["w-full flex items-center"]>
+                    <input
+                        prop:value=title.clone()
+                        on:change=move |e| set_title(event_target_value(&e))
+                        class=uno!["bg-transparent rounded-[4px] mr-2 px-2 pt-2 flex-grow"]
+                    />
+                </label>
+                <label>
+                    <textarea
+                        prop:value=description()
+                        on:change=move |e| set_description(event_target_value(&e))
+                        class=uno![
+                            "bg-[#1E2733] p-4 rounded-[4px] text-customWhite h-[100px] w-full"
+                        ]
+                    >
+                    </textarea>
+                </label>
+                <div>
+                    {move || {
+                        if !src_img().is_empty() {
+                            view! {
+                                <div class=uno!["relative w-fit"]>
+                                    <img
+                                        src=src_img
+                                        alt=format!("img-{}", title())
+                                        class=uno![
+                                            "max-w-[200px] mt-4 aspect-w-16 aspect-h-9 rounded-md object-cover"
+                                        ]
+                                    />
+
+                                    <span
+                                        class=uno![
+                                            "flex text-xs items-center bg-red-5 w-fit p-1 rounded-md absolute top-[-10px] right-[-10px] cursor-pointer"
+                                        ]
+
+                                        on:click=move |_| set_src_img.set(String::new())
+                                    >
+                                        <X size=16/>
+                                    </span>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    id="cover"
+                                    checked=img_covered
+                                    on:change=move |e| set_covered_img(event_target_checked(&e))
+                                />
+                                <label for="cover" class=uno!["ml-2 text-xs"]>
+                                    Put image as cover
+                                </label>
                             }
                         } else {
-                            log::warn!("Cannot get files");
+                            view! {
+                                <label
+                                    for="file-upload"
+                                    node_ref=drop_zone_el
+                                    class=uno![
+                                        "flex items-center h-20 gap-2 p-4 rounded-md border-2 border-dashed border-columnBackgroundColor cursor-pointer"
+                                    ]
+                                >
+
+                                    <Image/>
+                                    <span class=uno!["pointer-events-none"]>{load_file_text}</span>
+                                </label>
+                                <input
+                                    node_ref=input_file_ref
+                                    type="file"
+                                    id="file-upload"
+                                    prop:accept="image/*"
+                                    class=uno!["hidden"]
+                                    on:change=move |_| {
+                                        if let Some(files) = input_file_ref.get() {
+                                            if let Some(files) = files.files() {
+                                                if files.length() > 0 {
+                                                    handle_upload_file(files.get(0).unwrap());
+                                                } else {
+                                                    log::warn!("Files selected is empty");
+                                                }
+                                            } else {
+                                                log::warn!("Cannot get files");
+                                            }
+                                        }
+                                    }
+                                />
+                            }
                         }
-                    } 
-                }
-                />
-            }
-          }}
+                    }}
+
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
     }
 }

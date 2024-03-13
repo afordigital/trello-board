@@ -38,48 +38,58 @@ where
     };
 
     view! {
-    <>
-      <div
-        // ref_node={setNodeRef}
-        // style={style}
-        on:click=move |_| on_select(card.clone())
-        //onClick={(e: React.MouseEvent<HTMLInputElement>) => {
-        //  if ((e.target as HTMLInputElement).id === "input-name") return
-        //  setIsOpened(true)
-        //}}
-        //onDrop={(e) => {
-        //  e.preventDefault()
-        //  e.stopPropagation()
-        //  if (e.dataTransfer.files) handleUploadImage(e.dataTransfer.files)
-        //}}
-        class=uno!["h-18 w-full gap-y-4 p-x-2 overflow-y-auto bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col justify-center text-white cursor-pointer"]
-      >
-        <label class=uno!["w-full flex h-fit items-center gap-2"]>
-          {move || (img_covered && !src_img.is_empty()).then_some(view! {
-            <img
-              src=src_img.clone()
-              alt="Image Preview"
-              class=uno!["w-[50px] h-fit object-cover rounded-md"]
-            />
-          })}
-          <input
-            value={title}
-            on:click:undelegated= move |e| {
-                e.prevent_default();
-                e.stop_propagation();
-            }
-            on:change=move |e| handle_title_change(event_target_value(&e))
-            class=uno!["bg-transparent rounded-[4px] flex-grow"]
-          />
-          <span class=uno!["flex gap-2"]>
-            <div class=uno!["cursor-pointer"]>
-              <Minus on:click=move |_| delete_card() />
-            </div>
-            <GripVertical  />
-          </span>
-        </label>
+        <>
+            <div
+                // ref_node={setNodeRef}
+                // style={style}
+                on:click=move |_| on_select(card.clone())
+                // onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                // if ((e.target as HTMLInputElement).id === "input-name") return
+                // setIsOpened(true)
+                // }}
+                // onDrop={(e) => {
+                // e.preventDefault()
+                // e.stopPropagation()
+                // if (e.dataTransfer.files) handleUploadImage(e.dataTransfer.files)
+                // }}
+                class=uno![
+                    "h-18 w-full gap-y-4 p-x-2 overflow-y-auto bg-mainBackgroundColor border-2 border-columnBackgroundColor rounded-md flex flex-col justify-center text-white cursor-pointer"
+                ]
+            >
 
-      </div>
-    </>
+                <label class=uno![
+                    "w-full flex h-fit items-center gap-2"
+                ]>
+                    {move || {
+                        (img_covered && !src_img.is_empty())
+                            .then_some(
+                                view! {
+                                    <img
+                                        src=src_img.clone()
+                                        alt="Image Preview"
+                                        class=uno!["w-[50px] h-fit object-cover rounded-md"]
+                                    />
+                                },
+                            )
+                    }}
+                    <input
+                        value=title
+                        on:click:undelegated=move |e| {
+                            e.prevent_default();
+                            e.stop_propagation();
+                        }
+
+                        on:change=move |e| handle_title_change(event_target_value(&e))
+                        class=uno!["bg-transparent rounded-[4px] flex-grow"]
+                    /> <span class=uno!["flex gap-2"]>
+                        <div class=uno!["cursor-pointer"]>
+                            <Minus on:click=move |_| delete_card()/>
+                        </div>
+                        <GripVertical/>
+                    </span>
+                </label>
+
+            </div>
+        </>
     }
 }

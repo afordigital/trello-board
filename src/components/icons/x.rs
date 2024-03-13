@@ -4,7 +4,7 @@ use leptos::{component, view, IntoView};
 pub fn X(
     #[prop(default = 24)] size: u32,
     #[prop(default = String::new())] class: String,
-    ) -> impl IntoView {
+) -> impl IntoView {
     view! {
         <svg
             width=size
@@ -16,9 +16,10 @@ pub fn X(
             stroke="currentColor"
             stroke-width="2"
             stroke-linecap="round"
-            stroke-linejoin="round">
-            <path d="M18 6 6 18"/>
-            <path d="m6 6 12 12"/>
+            stroke-linejoin="round"
+        >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
         </svg>
     }
 }

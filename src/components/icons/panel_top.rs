@@ -4,7 +4,7 @@ use leptos::{component, view, IntoView};
 pub fn LayoutPanelTop(
     #[prop(default = 24)] size: u32,
     #[prop(default = "")] class: &'static str,
-    ) -> impl IntoView {
+) -> impl IntoView {
     view! {
         <svg
             width=size
@@ -16,10 +16,11 @@ pub fn LayoutPanelTop(
             stroke="currentColor"
             stroke-width="2"
             stroke-linecap="round"
-            stroke-linejoin="round">
-            <rect width="18" height="7" x="3" y="3" rx="1"/>
-            <rect width="7" height="7" x="3" y="14" rx="1"/>
-            <rect width="7" height="7" x="14" y="14" rx="1"/>
+            stroke-linejoin="round"
+        >
+            <rect width="18" height="7" x="3" y="3" rx="1"></rect>
+            <rect width="7" height="7" x="3" y="14" rx="1"></rect>
+            <rect width="7" height="7" x="14" y="14" rx="1"></rect>
         </svg>
     }
 }
