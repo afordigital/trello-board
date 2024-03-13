@@ -1,4 +1,4 @@
-name: clippy
+name: Publish to GitHub Pages
 on:
   workflow_dispatch:
   pull_request:

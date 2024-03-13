@@ -1,4 +1,4 @@
-name: clippy
+name: Check Format and Code Quality
 on:
   workflow_dispatch:
   workflow_call:
@@ -19,6 +19,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@nightly
         with:
           toolchain: nightly-2024-03-08
+          components: rustfmt
       - uses: Swatinem/rust-cache@v2
       - name: checks
         run: |
@@ -54,7 +55,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@nightly
         with:
           toolchain: nightly-2024-03-08
+          components: clippy
       - uses: Swatinem/rust-cache@v2
-      - name: cargo clippy
+      - name: cargo check
         run: |
-          check
+          cargo check
